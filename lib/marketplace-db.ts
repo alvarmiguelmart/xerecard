@@ -15,19 +15,12 @@ type ServiceWithRelations = Service & {
     name: string | null;
     image: string | null;
   };
-  ratings?: Array<{ score: number }>;
   _count?: {
     likes: number;
-    ratings: number;
   };
 };
 
 function mapService(service: ServiceWithRelations): MarketplaceService {
-  const ratingCount = service._count?.ratings ?? service.ratings?.length ?? 0;
-  const ratingTotal =
-    service.ratings?.reduce((total, rating) => total + rating.score, 0) ?? 0;
-  const averageRating = ratingCount > 0 ? ratingTotal / ratingCount : 0;
-
   return {
     id: service.id,
     mode: service.mode === "REQUEST" ? "request" : "offer",
@@ -39,8 +32,8 @@ function mapService(service: ServiceWithRelations): MarketplaceService {
     ownerId: service.owner?.id ?? service.ownerId,
     ownerName: service.owner?.name ?? "Usuário Xerecard",
     ownerImage: service.owner?.image ?? null,
-    rating: averageRating,
-    ratingCount,
+    rating: 0,
+    ratingCount: 0,
     likeCount: service._count?.likes ?? 0,
     image: service.imageUrl,
     whatsapp: service.whatsapp,
@@ -121,8 +114,7 @@ async function ensureSeedData() {
 
 const serviceInclude = {
   owner: { select: { id: true, name: true, image: true } },
-  ratings: { select: { score: true } },
-  _count: { select: { likes: true, ratings: true } }
+  _count: { select: { likes: true } }
 } satisfies Prisma.ServiceInclude;
 
 export async function listServices() {
