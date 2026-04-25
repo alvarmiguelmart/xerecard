@@ -59,7 +59,7 @@ export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
       </Button>
       {needsSubscription ? (
         <ButtonLink href="/minha-conta#assinatura" variant="secondary">
-          Assinar por R$ 9,90
+          Assinar por R$ 6,99
         </ButtonLink>
       ) : null}
       {needsLogin ? (

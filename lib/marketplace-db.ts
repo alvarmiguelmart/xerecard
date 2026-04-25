@@ -20,6 +20,32 @@ type ServiceWithRelations = Service & {
   };
 };
 
+const adultCategoryHints = [
+  "+18",
+  "Perfis verificados",
+  "Packs digitais",
+  "Conteúdo premium",
+  "Lives privadas",
+  "Ensaios sensuais",
+  "Fotografia adulta",
+  "Divulgação adulta",
+  "Social media privado",
+  "Loja de conteúdo",
+  "Assinaturas e fãs",
+  "Comunidades privadas",
+  "Atendimento personalizado",
+  "Verificação de perfil",
+  "Segurança e privacidade"
+];
+
+function hasDatabaseConnection() {
+  return Boolean(process.env.DATABASE_URL);
+}
+
+function isAdultCategory(category: string) {
+  return adultCategoryHints.some((hint) => category.includes(hint));
+}
+
 function mapService(service: ServiceWithRelations): MarketplaceService {
   return {
     id: service.id,
@@ -38,7 +64,9 @@ function mapService(service: ServiceWithRelations): MarketplaceService {
     image: service.imageUrl,
     whatsapp: service.whatsapp,
     tags: [service.category, service.location, service.mode === "REQUEST" ? "Pedido" : "Oferta"],
-    verified: false
+    verified: false,
+    isAdult: isAdultCategory(service.category),
+    contentType: service.mode === "REQUEST" ? "Pedido" : "Serviço"
   };
 }
 
@@ -138,6 +166,10 @@ const serviceInclude = {
 } satisfies Prisma.ServiceInclude;
 
 export async function listServices() {
+  if (!hasDatabaseConnection()) {
+    return seedServices;
+  }
+
   try {
     await ensureSeedData();
 
@@ -154,6 +186,10 @@ export async function listServices() {
 }
 
 export async function findService(id: string) {
+  if (!hasDatabaseConnection()) {
+    return seedServices.find((service) => service.id === id) ?? null;
+  }
+
   try {
     await ensureSeedData();
 
@@ -215,6 +251,10 @@ export async function createService(input: {
 }
 
 export async function listNotifications(userId: string) {
+  if (!hasDatabaseConnection()) {
+    return seedNotifications;
+  }
+
   try {
     const notifications = await prisma.notification.findMany({
       where: { recipientId: userId },
@@ -229,6 +269,10 @@ export async function listNotifications(userId: string) {
 }
 
 export async function findPublicProfile(userId: string) {
+  if (!hasDatabaseConnection()) {
+    return getSeedPublicProfile(userId);
+  }
+
   try {
     await ensureSeedData();
 

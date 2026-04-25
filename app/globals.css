@@ -3,21 +3,21 @@
 @theme {
   --font-sans: "Inter", "Satoshi", "Segoe UI", system-ui, sans-serif;
   --color-ink: #071014;
-  --color-panel: #12231b;
-  --color-paper: #f7fbf5;
-  --color-cloud: #edf6ee;
-  --color-line: #cfe1d1;
+  --color-panel: #111715;
+  --color-paper: #effff2;
+  --color-cloud: #e3fbe8;
+  --color-line: #c8efcf;
   --color-coral: #ff6a3d;
   --color-rose: #ff4f87;
-  --color-mint: #70ef89;
-  --color-acid: #00e10b;
-  --color-sky: #078b3e;
+  --color-mint: #9af5a8;
+  --color-acid: #55e96a;
+  --color-sky: #168038;
   --color-gold: #ffe86b;
 }
 
 :root {
   color-scheme: light;
-  --background: #f7fbf5;
+  --background: #effff2;
   --foreground: #071014;
 }
 
@@ -47,7 +47,7 @@ select {
 }
 
 ::selection {
-  background: #70ef89;
+  background: #9af5a8;
   color: #071014;
 }
 
@@ -68,7 +68,7 @@ select {
 }
 
 .focus-ring:focus-visible {
-  outline-color: #00e10b;
+  outline-color: #55e96a;
 }
 
 .surface-grid {

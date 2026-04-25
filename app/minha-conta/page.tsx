@@ -117,7 +117,7 @@ export default async function AccountPage() {
                 Entre para gerenciar assinatura
               </h2>
               <p className="mt-3 max-w-xl text-base leading-7 text-ink/62">
-                O plano Essencial libera links de WhatsApp por R$ 9,90/mês.
+                O plano Essencial libera links de WhatsApp por R$ 6,99/mês.
               </p>
               <div className="mt-6 flex gap-3">
                 <ButtonLink href="/login" variant="secondary">

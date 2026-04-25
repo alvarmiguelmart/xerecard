@@ -54,7 +54,7 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
           }`}
           onClick={() => setMode("request")}
         >
-          Preciso de serviço
+          Criar pedido
         </button>
         <button
           type="button"
@@ -63,8 +63,18 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
           }`}
           onClick={() => setMode("offer")}
         >
-          Quero oferecer
+          Anunciar oferta
         </button>
+      </div>
+
+      <div className="rounded-xl bg-paper p-4">
+        <p className="text-sm font-black uppercase text-ink/48">
+          Publicação com privacidade
+        </p>
+        <p className="mt-2 text-sm leading-6 text-ink/62">
+          Escolha a categoria certa, informe valores e evite dados pessoais no
+          texto público.
+        </p>
       </div>
 
       <label className="grid gap-2 text-sm font-bold text-ink" htmlFor="title">
@@ -73,7 +83,7 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
           id="title"
           name="title"
           className="focus-ring h-12 rounded-lg border border-ink/12 bg-cloud px-4"
-          placeholder="Ex: Preciso de ajuda para evento"
+          placeholder="Ex: Catálogo digital com atendimento privado"
           required
           minLength={6}
         />
@@ -139,7 +149,7 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
           id="description"
           name="description"
           className="focus-ring min-h-36 resize-y rounded-lg border border-ink/12 bg-cloud p-4"
-          placeholder="Descreva o serviço, prazo, disponibilidade e condições."
+          placeholder="Explique o que oferece, valores, regras, privacidade, prazo e como prefere ser chamado."
           required
           minLength={20}
         />

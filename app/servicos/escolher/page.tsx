@@ -12,19 +12,21 @@ export default function ChooseServiceTypePage() {
           <div className="max-w-2xl">
             <p className="text-sm font-black uppercase text-sky">Cadastrar serviço</p>
             <h1 className="mt-2 text-5xl font-black text-ink">
-              Você quer pedir ou oferecer?
+              Publicar no Xerecard.
             </h1>
+            <p className="mt-4 text-base leading-7 text-ink/62">
+              Escolha entre criar uma demanda ou anunciar como creator/profissional +18.
+            </p>
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2">
             <article className="rounded-xl border border-ink/10 bg-white p-6 premium-shadow">
               <SearchCheck size={32} className="text-sky" aria-hidden="true" />
               <h2 className="mt-6 text-3xl font-black text-ink">
-                Preciso de serviço
+                Criar pedido
               </h2>
               <p className="mt-3 text-base leading-7 text-ink/62">
-                Publique o que você precisa, receba interessados e acompanhe
-                notificações.
+                Descreva o que procura, orçamento e prazo.
               </p>
               <ButtonLink href="/servicos/novo?tipo=precisando" className="mt-6">
                 Publicar pedido
@@ -34,11 +36,10 @@ export default function ChooseServiceTypePage() {
             <article className="rounded-xl border border-ink/10 bg-white p-6 premium-shadow">
               <BriefcaseBusiness size={32} className="text-sky" aria-hidden="true" />
               <h2 className="mt-6 text-3xl font-black text-ink">
-                Quero oferecer
+                Anunciar oferta
               </h2>
               <p className="mt-3 text-base leading-7 text-ink/62">
-                Crie um anúncio profissional com preço, local, detalhes e
-                WhatsApp.
+                Publique packs, serviços, comunidade ou perfil creator.
               </p>
               <ButtonLink href="/servicos/novo?tipo=oferecendo" className="mt-6">
                 Anunciar serviço

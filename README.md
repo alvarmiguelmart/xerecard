@@ -1,6 +1,6 @@
 # Xerecard
 
-Marketplace de servicos em Next.js onde usuarios podem publicar pedidos, oferecer servicos, assinar planos baratos e liberar contato via WhatsApp.
+Marketplace em Next.js onde usuarios podem publicar pedidos, anunciar servicos/conteudos digitais, assinar planos e liberar contato privado via WhatsApp.
 
 ## Stack
 
@@ -19,7 +19,11 @@ Marketplace de servicos em Next.js onde usuarios podem publicar pedidos, oferece
 - Login social por Google quando as credenciais OAuth estiverem configuradas.
 - Perfil com nome e foto editaveis.
 - Publicacao de pedidos e ofertas com upload de imagem.
-- Marketplace com listagem por trilhos horizontais, detalhe, curtidas, notas e contato por WhatsApp.
+- Marketplace minimalista com filtros por categoria, tipo e publico restrito.
+- Age gate para confirmar maioridade antes de navegar.
+- Categorias para packs digitais, conteudo premium, lives privadas, privacidade e divulgacao.
+- Identidade visual em `public/brand/xerecard.png`.
+- Listagem, detalhe, curtidas, notas e contato por WhatsApp.
 - Perfil publico do usuario com avatar, publicacoes, curtidas recebidas e avaliacoes.
 - Gate de assinatura: usuario gratuito nao abre o WhatsApp do anuncio.
 - Planos Essencial e Profissional com checkout por cartao ou Pix.
@@ -33,6 +37,7 @@ Marketplace de servicos em Next.js onde usuarios podem publicar pedidos, oferece
 ```bash
 copy .env.example .env
 npm install
+npx prisma generate
 npm run db:push
 npm run dev
 ```
@@ -42,7 +47,8 @@ Acesse `http://localhost:3000`.
 ## Variaveis de ambiente
 
 ```env
-DATABASE_URL="file:./dev.db"
+DATABASE_URL="postgresql://postgres.[PROJECT_REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1"
+DIRECT_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT_REF].supabase.co:5432/postgres"
 AUTH_SECRET="replace-with-a-long-random-secret"
 AUTH_URL="http://localhost:3000"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
@@ -56,14 +62,14 @@ STRIPE_ESSENTIAL_PRICE_ID=""
 STRIPE_PROFESSIONAL_PRICE_ID=""
 ```
 
-Para desenvolvimento, o projeto usa SQLite via Prisma. Para producao na Vercel, use um banco persistente, como Vercel Postgres, Neon ou Supabase, e ajuste `DATABASE_URL` e o provider do Prisma conforme o banco escolhido antes de rodar `npm run db:push`.
+O backend usa Prisma conectado ao PostgreSQL do Supabase. No painel do Supabase, copie a connection string pooled para `DATABASE_URL` e a connection string direta para `DIRECT_URL`, substituindo `[PROJECT_REF]`, `[REGION]` e `[PASSWORD]`. Depois rode `npm run db:push` para criar as tabelas no banco.
 
 ## Stripe
 
 Crie dois produtos/precos recorrentes na Stripe:
 
-- Essencial: `R$ 9,90/mês`
-- Profissional: `R$ 19,90/mês`
+- Essencial: `R$ 6,99/mês`
+- Profissional: `R$ 12,99/mês`
 
 Depois preencha:
 

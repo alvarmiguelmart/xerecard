@@ -11,6 +11,10 @@ export function ServiceRail({
 }) {
   const titleId = `rail-${title.toLowerCase().replace(/\s+/g, "-")}`;
 
+  if (services.length === 0) {
+    return null;
+  }
+
   return (
     <section className="mt-10" aria-labelledby={titleId}>
       <div className="flex items-center justify-between gap-4">

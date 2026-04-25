@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
+import { AgeGate } from "@/components/age-gate";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Xerecard | Marketplace de serviços",
+  title: "Xerecard | Marketplace de contatos privados",
   description:
-    "Xerecard é um marketplace para publicar pedidos, oferecer serviços, entrar na conta e gerenciar assinatura.",
+    "Xerecard conecta pedidos, ofertas, serviços digitais, comunidades e contatos privados em uma vitrine simples.",
   metadataBase: new URL("https://xerecard.vercel.app"),
   openGraph: {
     title: "Xerecard",
     description:
-      "Publique pedidos, ofereça serviços, acompanhe notificações e gerencie sua conta.",
-    images: ["/generated/marketplace-hero.png"]
+      "Marketplace simples para publicar, descobrir e liberar contatos privados.",
+    images: ["/brand/xerecard.png"]
   }
 };
 
@@ -27,7 +28,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body>
+        <AgeGate />
+        {children}
+      </body>
     </html>
   );
 }
