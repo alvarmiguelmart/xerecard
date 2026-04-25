@@ -1,0 +1,64 @@
+"use client";
+
+import { Crown } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { PlanId } from "@/lib/marketplace-data";
+
+export function SubscribeButton({
+  plan = "ESSENTIAL",
+  method
+}: {
+  plan?: Exclude<PlanId, "FREE">;
+  method: "card" | "pix";
+}) {
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  async function activate() {
+    setIsLoading(true);
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/subscription/activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, method })
+      });
+      const data = (await response.json()) as { message?: string; url?: string };
+
+      if (!response.ok) {
+        throw new Error(data.message ?? "Não foi possível ativar assinatura.");
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      setMessage("Checkout iniciado.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error ? error.message : "Não foi possível ativar assinatura."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="grid gap-2">
+      <Button
+        type="button"
+        icon={<Crown size={18} aria-hidden="true" />}
+        onClick={activate}
+        disabled={isLoading}
+      >
+        {isLoading ? "Abrindo checkout" : method === "pix" ? "Pagar com Pix" : "Pagar com cartão"}
+      </Button>
+      <p className="min-h-5 text-sm font-semibold text-sky" role="status">
+        {message}
+      </p>
+    </div>
+  );
+}

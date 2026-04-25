@@ -1,0 +1,35 @@
+import { ArrowRight } from "lucide-react";
+import { ServiceCard } from "@/components/service-card";
+import { MarketplaceService } from "@/lib/marketplace-data";
+
+export function ServiceRail({
+  title,
+  services
+}: {
+  title: string;
+  services: MarketplaceService[];
+}) {
+  const titleId = `rail-${title.toLowerCase().replace(/\s+/g, "-")}`;
+
+  return (
+    <section className="mt-10" aria-labelledby={titleId}>
+      <div className="flex items-center justify-between gap-4">
+        <h2 id={titleId} className="text-3xl font-black text-ink">
+          {title}
+        </h2>
+        <ArrowRight className="hidden text-ink/35 md:block" size={24} aria-hidden="true" />
+      </div>
+
+      <div className="mt-5 flex snap-x gap-5 overflow-x-auto pb-4 pr-4">
+        {services.map((service) => (
+          <div
+            key={service.id}
+            className="w-[min(86vw,22rem)] shrink-0 snap-start lg:w-[calc((100%_-_2.5rem)/3)]"
+          >
+            <ServiceCard service={service} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
