@@ -55,6 +55,26 @@ function mapNotification(notification: Notification): AppNotification {
   };
 }
 
+function getSeedPublicProfile(userId: string) {
+  const services = seedServices.filter((service) => service.ownerId === userId);
+
+  if (services.length === 0) {
+    return null;
+  }
+
+  return {
+    id: userId,
+    name: services[0].ownerName,
+    image: services[0].ownerImage,
+    role: "PROFESSIONAL" as const,
+    createdAt: new Date(),
+    serviceCount: services.length,
+    likeCount: services.reduce((total, service) => total + service.likeCount, 0),
+    ratingCount: services.reduce((total, service) => total + service.ratingCount, 0),
+    services
+  };
+}
+
 async function ensureSeedData() {
   const demoUser = await prisma.user.upsert({
     where: { email: "demo@xerecard.local" },
@@ -118,25 +138,35 @@ const serviceInclude = {
 } satisfies Prisma.ServiceInclude;
 
 export async function listServices() {
-  await ensureSeedData();
+  try {
+    await ensureSeedData();
 
-  const services = await prisma.service.findMany({
-    include: serviceInclude,
-    orderBy: { createdAt: "desc" }
-  });
+    const services = await prisma.service.findMany({
+      include: serviceInclude,
+      orderBy: { createdAt: "desc" }
+    });
 
-  return services.map(mapService);
+    return services.map(mapService);
+  } catch (error) {
+    console.error("Falling back to seed services", error);
+    return seedServices;
+  }
 }
 
 export async function findService(id: string) {
-  await ensureSeedData();
+  try {
+    await ensureSeedData();
 
-  const service = await prisma.service.findUnique({
-    where: { id },
-    include: serviceInclude
-  });
+    const service = await prisma.service.findUnique({
+      where: { id },
+      include: serviceInclude
+    });
 
-  return service ? mapService(service) : null;
+    return service ? mapService(service) : null;
+  } catch (error) {
+    console.error("Falling back to seed service", error);
+    return seedServices.find((service) => service.id === id) ?? null;
+  }
 }
 
 export async function findRawService(id: string) {
@@ -185,52 +215,62 @@ export async function createService(input: {
 }
 
 export async function listNotifications(userId: string) {
-  const notifications = await prisma.notification.findMany({
-    where: { recipientId: userId },
-    orderBy: { createdAt: "desc" }
-  });
+  try {
+    const notifications = await prisma.notification.findMany({
+      where: { recipientId: userId },
+      orderBy: { createdAt: "desc" }
+    });
 
-  return notifications.map(mapNotification);
+    return notifications.map(mapNotification);
+  } catch (error) {
+    console.error("Falling back to seed notifications", error);
+    return seedNotifications;
+  }
 }
 
 export async function findPublicProfile(userId: string) {
-  await ensureSeedData();
+  try {
+    await ensureSeedData();
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      role: true,
-      createdAt: true,
-      services: {
-        include: serviceInclude,
-        orderBy: { createdAt: "desc" }
-      },
-      _count: {
-        select: { services: true }
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        role: true,
+        createdAt: true,
+        services: {
+          include: serviceInclude,
+          orderBy: { createdAt: "desc" }
+        },
+        _count: {
+          select: { services: true }
+        }
       }
+    });
+
+    if (!user) {
+      return null;
     }
-  });
 
-  if (!user) {
-    return null;
+    const services = user.services.map(mapService);
+
+    return {
+      id: user.id,
+      name: user.name ?? "Usuário Xerecard",
+      image: user.image,
+      role: user.role,
+      createdAt: user.createdAt,
+      serviceCount: user._count.services,
+      likeCount: services.reduce((total, service) => total + service.likeCount, 0),
+      ratingCount: services.reduce((total, service) => total + service.ratingCount, 0),
+      services
+    };
+  } catch (error) {
+    console.error("Falling back to seed profile", error);
+    return getSeedPublicProfile(userId);
   }
-
-  const services = user.services.map(mapService);
-
-  return {
-    id: user.id,
-    name: user.name ?? "Usuário Xerecard",
-    image: user.image,
-    role: user.role,
-    createdAt: user.createdAt,
-    serviceCount: user._count.services,
-    likeCount: services.reduce((total, service) => total + service.likeCount, 0),
-    ratingCount: services.reduce((total, service) => total + service.ratingCount, 0),
-    services
-  };
 }
 
 export async function createNotification(input: {
