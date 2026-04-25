@@ -3,6 +3,7 @@
 import { MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 
 export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
   const [message, setMessage] = useState("");
@@ -20,7 +21,7 @@ export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
       const response = await fetch(`/api/services/${serviceId}/whatsapp`, {
         method: "POST"
       });
-      const data = (await response.json()) as { url?: string; message?: string };
+      const data = await readJsonResponse<{ url?: string; message?: string }>(response);
 
       if (response.status === 401) {
         setNeedsLogin(true);

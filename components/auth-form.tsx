@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 import { UserRole } from "@/lib/marketplace-data";
 
 type AuthMode = "login" | "register";
@@ -33,7 +34,7 @@ export function AuthForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(Object.fromEntries(formData))
         });
-        const data = (await response.json()) as { message?: string };
+        const data = await readJsonResponse<{ message?: string }>(response);
 
         if (!response.ok) {
           throw new Error(data.message ?? "Não foi possível criar sua conta.");

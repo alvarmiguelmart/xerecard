@@ -3,6 +3,7 @@
 import { Star } from "lucide-react";
 import { useState } from "react";
 import { ButtonLink } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 import { cn } from "@/lib/utils";
 
 export function RatingForm({
@@ -33,11 +34,11 @@ export function RatingForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ score })
       });
-      const data = (await response.json()) as {
+      const data = await readJsonResponse<{
         message?: string;
         rating?: number;
         ratingCount?: number;
-      };
+      }>(response);
 
       if (response.status === 401) {
         setNeedsLogin(true);

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 
 export function ProfilePhotoForm({
   name,
@@ -27,7 +28,7 @@ export function ProfilePhotoForm({
         method: "PATCH",
         body: new FormData(event.currentTarget)
       });
-      const data = (await response.json()) as { message?: string; image?: string };
+      const data = await readJsonResponse<{ message?: string; image?: string }>(response);
 
       if (!response.ok) {
         throw new Error(data.message ?? "Não foi possível atualizar perfil.");

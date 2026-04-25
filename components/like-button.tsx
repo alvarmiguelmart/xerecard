@@ -3,6 +3,7 @@
 import { Heart } from "lucide-react";
 import { useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 
 export function LikeButton({
   serviceId,
@@ -25,7 +26,7 @@ export function LikeButton({
       const response = await fetch(`/api/services/${serviceId}/like`, {
         method: "POST"
       });
-      const data = (await response.json()) as { message?: string; likeCount?: number };
+      const data = await readJsonResponse<{ message?: string; likeCount?: number }>(response);
 
       if (response.status === 401) {
         setNeedsLogin(true);

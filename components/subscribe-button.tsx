@@ -3,6 +3,7 @@
 import { Crown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 import { PlanId } from "@/lib/marketplace-data";
 
 export function SubscribeButton({
@@ -25,7 +26,7 @@ export function SubscribeButton({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan, method })
       });
-      const data = (await response.json()) as { message?: string; url?: string };
+      const data = await readJsonResponse<{ message?: string; url?: string }>(response);
 
       if (!response.ok) {
         throw new Error(data.message ?? "Não foi possível ativar assinatura.");

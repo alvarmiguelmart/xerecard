@@ -4,6 +4,7 @@ import { ArrowRight, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { readJsonResponse } from "@/lib/http";
 import { categories, ServiceMode } from "@/lib/marketplace-data";
 
 export function ServiceForm({ initialMode = "request" }: { initialMode?: ServiceMode }) {
@@ -25,7 +26,7 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
         method: "POST",
         body: formData
       });
-      const data = (await response.json()) as { message?: string };
+      const data = await readJsonResponse<{ message?: string }>(response);
 
       if (!response.ok) {
         throw new Error(data.message ?? "Não foi possível publicar.");
