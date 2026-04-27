@@ -27,11 +27,11 @@ export function ServiceRail({
         </div>
       </div>
 
-      <div className="hide-scrollbar mt-5 flex snap-x gap-5 overflow-x-auto pb-5 pr-4">
+      <div className="marketplace-scrollbar mt-5 flex snap-x items-stretch gap-5 overflow-x-auto pb-5 pr-4">
         {services.map((service) => (
           <div
             key={service.id}
-            className="w-[min(86vw,22rem)] shrink-0 snap-start lg:w-[calc((100%_-_2.5rem)/3)]"
+            className="flex w-[min(86vw,22rem)] shrink-0 snap-start lg:w-[calc((100%_-_2.5rem)/3)]"
           >
             <ServiceCard service={service} />
           </div>

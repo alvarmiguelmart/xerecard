@@ -18,12 +18,14 @@ type SortOption = "recent" | "rating" | "likes" | "price-asc" | "price-desc";
 
 export function ServiceMarketplace({
   services,
-  initialCategory = "all"
+  initialCategory = "all",
+  initialQuery = ""
 }: {
   services: MarketplaceService[];
   initialCategory?: string;
+  initialQuery?: string;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [mode, setMode] = useState<"all" | ServiceMode>("all");
   const [category, setCategory] = useState(initialCategory);
   const [locationQuery, setLocationQuery] = useState("");
@@ -199,13 +201,13 @@ export function ServiceMarketplace({
       </div>
 
       <div className="mt-8 grid gap-3 md:grid-cols-3">
-        <p className="rounded-xl border border-ink/10 bg-mint p-4 text-sm font-black text-ink">
+        <p className="flex min-h-20 items-center rounded-xl border border-ink/10 bg-mint p-4 text-sm font-black text-ink">
           {requests.length} pedidos de quem quer contratar.
         </p>
-        <p className="rounded-xl border border-ink/10 bg-white p-4 text-sm font-black text-ink/68">
+        <p className="flex min-h-20 items-center rounded-xl border border-ink/10 bg-white p-4 text-sm font-black text-ink/68">
           {offers.length} profissionais e serviços anunciados.
         </p>
-        <p className="rounded-xl border border-ink/10 bg-white p-4 text-sm font-black text-ink/68">
+        <p className="flex min-h-20 items-center rounded-xl border border-ink/10 bg-white p-4 text-sm font-black text-ink/68">
           Assinantes conversam direto pelo WhatsApp.
         </p>
       </div>

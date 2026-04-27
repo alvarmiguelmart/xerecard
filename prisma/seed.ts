@@ -5,23 +5,30 @@ import { normalizeBrazilianWhatsApp } from "../lib/phone";
 const prisma = new PrismaClient();
 
 async function main() {
-  const demoUser = await prisma.user.upsert({
-    where: { email: "demo@xerecard.local" },
-    update: {
-      name: "Equipe Xerecard",
-      image: "/generated/marketplace-hero.png"
-    },
-    create: {
-      name: "Equipe Xerecard",
-      email: "demo@xerecard.local",
-      role: "PROFESSIONAL",
-      plan: "PROFESSIONAL",
-      image: "/generated/marketplace-hero.png"
-    }
-  });
+  const seedUsers = new Map<string, Awaited<ReturnType<typeof prisma.user.upsert>>>();
+
+  for (const service of seedServices) {
+    const email = `${service.ownerId}@xerecard.local`;
+    const user = await prisma.user.upsert({
+      where: { email },
+      update: {
+        name: service.ownerName,
+        image: service.ownerImage
+      },
+      create: {
+        name: service.ownerName,
+        email,
+        role: "PROFESSIONAL",
+        plan: "PROFESSIONAL",
+        image: service.ownerImage
+      }
+    });
+
+    seedUsers.set(service.ownerId, user);
+  }
 
   const existingServices = await prisma.service.findMany({
-    where: { ownerId: demoUser.id },
+    where: { title: { in: seedServices.map((service) => service.title) } },
     select: { title: true }
   });
   const existingTitles = new Set(existingServices.map((service) => service.title));
@@ -33,9 +40,14 @@ async function main() {
     await prisma.service.createMany({
       data: missingServices.map((service) => {
         const whatsapp = normalizeBrazilianWhatsApp(service.whatsapp);
+        const owner = seedUsers.get(service.ownerId);
 
         if (!whatsapp) {
           throw new Error(`Invalid seed WhatsApp number for service: ${service.title}`);
+        }
+
+        if (!owner) {
+          throw new Error(`Missing seed owner for service: ${service.title}`);
         }
 
         return {
@@ -47,14 +59,38 @@ async function main() {
           description: service.description,
           whatsapp,
           imageUrl: service.image,
-          ownerId: demoUser.id
+          ownerId: owner.id
         };
       })
     });
   }
 
+  await Promise.all(
+    seedServices.map((service) => {
+      const owner = seedUsers.get(service.ownerId);
+
+      if (!owner) {
+        throw new Error(`Missing seed owner for service: ${service.title}`);
+      }
+
+      return prisma.service.updateMany({
+        where: { title: service.title },
+        data: {
+          ownerId: owner.id,
+          imageUrl: service.image
+        }
+      });
+    })
+  );
+
+  const notificationUser = seedUsers.get(seedServices[0].ownerId);
+
+  if (!notificationUser) {
+    throw new Error("Missing notification seed user.");
+  }
+
   const notificationCount = await prisma.notification.count({
-    where: { recipientId: demoUser.id }
+    where: { recipientId: notificationUser.id }
   });
 
   if (notificationCount === 0) {
@@ -63,7 +99,7 @@ async function main() {
         type: notification.unread ? "SERVICE_INTEREST" : "SUBSCRIPTION",
         title: notification.title,
         message: notification.description,
-        recipientId: demoUser.id
+        recipientId: notificationUser.id
       }))
     });
   }

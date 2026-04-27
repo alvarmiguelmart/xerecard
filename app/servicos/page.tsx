@@ -7,6 +7,7 @@ import type { MarketplaceService } from "@/lib/marketplace-data";
 
 type ServicesPageProps = {
   searchParams?: Promise<{
+    busca?: string;
     categoria?: string;
   }>;
 };
@@ -14,6 +15,7 @@ type ServicesPageProps = {
 export default async function ServicesPage({ searchParams }: ServicesPageProps) {
   const params = await searchParams;
   const requestedCategory = params?.categoria;
+  const initialQuery = params?.busca?.trim().slice(0, 120) ?? "";
   const initialCategory =
     requestedCategory && categories.includes(requestedCategory as (typeof categories)[number])
       ? requestedCategory
@@ -46,7 +48,11 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
               </p>
             </div>
           ) : (
-            <ServiceMarketplace services={services} initialCategory={initialCategory} />
+            <ServiceMarketplace
+              services={services}
+              initialCategory={initialCategory}
+              initialQuery={initialQuery}
+            />
           )}
         </section>
       </main>

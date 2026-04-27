@@ -191,6 +191,29 @@ textarea::placeholder {
   display: none;
 }
 
+.marketplace-scrollbar {
+  scrollbar-color: #4ade80 rgb(237 247 239 / 0.14);
+  scrollbar-width: thin;
+}
+
+.marketplace-scrollbar::-webkit-scrollbar {
+  height: 0.65rem;
+}
+
+.marketplace-scrollbar::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgb(237 247 239 / 0.14);
+}
+
+.marketplace-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #4ade80;
+}
+
+.marketplace-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #22c55e;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

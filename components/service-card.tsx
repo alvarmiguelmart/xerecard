@@ -12,7 +12,7 @@ export function ServiceCard({ service }: { service: MarketplaceService }) {
       : "Sem notas";
 
   return (
-    <article className="group overflow-hidden rounded-xl border border-ink/10 bg-white transition hover:-translate-y-1 hover:border-sky/35 hover:shadow-[0_20px_52px_rgba(7,16,20,0.12)]">
+    <article className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-ink/10 bg-white transition hover:-translate-y-1 hover:border-sky/35 hover:shadow-[0_20px_52px_rgba(7,16,20,0.12)]">
       <Link
         href={`/servicos/${service.id}`}
         className="focus-ring relative block aspect-[4/3] bg-cloud"
@@ -35,7 +35,7 @@ export function ServiceCard({ service }: { service: MarketplaceService }) {
         ) : null}
       </Link>
 
-      <div className="grid gap-4 p-5">
+      <div className="flex flex-1 flex-col gap-4 p-5">
         <Link
           href={`/usuarios/${service.ownerId}`}
           className="focus-ring flex items-center gap-3 rounded-lg text-left hover:bg-cloud"
@@ -79,7 +79,7 @@ export function ServiceCard({ service }: { service: MarketplaceService }) {
           ))}
         </div>
 
-        <div className="flex items-center justify-between gap-4 border-t border-ink/10 pt-4">
+        <div className="mt-auto flex items-center justify-between gap-4 border-t border-ink/10 pt-4">
           <div>
             <p className="text-sm font-black text-ink">{service.priceLabel}</p>
             <p className="mt-1 flex items-center gap-1 text-xs font-bold text-ink/56">

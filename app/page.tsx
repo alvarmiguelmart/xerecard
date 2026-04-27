@@ -191,15 +191,27 @@ export default async function Home() {
                 Publique pedidos, anuncie seu trabalho e acompanhe interessados em
                 um marketplace simples, direto e feito para gerar conversa real.
               </p>
-              <div className="mt-6 grid max-w-2xl gap-3 rounded-xl border border-ink/10 bg-white/82 p-3 shadow-sm sm:grid-cols-[1fr_auto]">
-                <div className="flex min-h-12 items-center gap-3 rounded-lg bg-cloud px-4 text-sm font-bold text-ink/52">
+              <form
+                action="/servicos"
+                className="mt-6 grid max-w-2xl gap-3 rounded-xl border border-ink/10 bg-white/82 p-3 shadow-sm sm:grid-cols-[1fr_auto]"
+              >
+                <label className="flex min-h-12 items-center gap-3 rounded-lg bg-cloud px-4 text-sm font-bold text-ink/52">
                   <Search size={18} aria-hidden="true" />
-                  Buscar diarista, manutenção, fotografia...
-                </div>
-                <ButtonLink href="/servicos" variant="dark">
+                  <input
+                    type="search"
+                    name="busca"
+                    aria-label="Buscar serviços"
+                    placeholder="Buscar diarista, manutenção, fotografia..."
+                    className="w-full bg-transparent text-base font-bold text-ink outline-none placeholder:text-ink/42"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className="focus-ring inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-ink px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(7,16,20,0.16)] transition hover:bg-panel"
+                >
                   Buscar serviços
-                </ButtonLink>
-              </div>
+                </button>
+              </form>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <ButtonLink
                   href="/cadastrar"
@@ -256,8 +268,8 @@ export default async function Home() {
                       Marina quer falar sobre seu anúncio.
                     </p>
                   </div>
-                  <div className="rounded-xl bg-mint p-4 text-ink">
-                    <p className="text-xs font-black uppercase text-ink/52">Hoje</p>
+                  <div className="rounded-xl bg-mint p-4 text-panel">
+                    <p className="text-xs font-black uppercase text-panel/60">Hoje</p>
                     <p className="mt-1 text-2xl font-black">8 contatos</p>
                   </div>
                 </div>
