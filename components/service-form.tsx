@@ -1,13 +1,14 @@
 "use client";
 
-import { ArrowRight, BriefcaseBusiness, Handshake, Upload } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Handshake, Lightbulb, Sparkles, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { readJsonResponse } from "@/lib/http";
-import { categories, ServiceMode } from "@/lib/marketplace-data";
+import { categories } from "@/lib/marketplace-data";
+import type { ServiceMode } from "@prisma/client";
 
-export function ServiceForm({ initialMode = "request" }: { initialMode?: ServiceMode }) {
+export function ServiceForm({ initialMode = "REQUEST" }: { initialMode?: ServiceMode }) {
   const router = useRouter();
   const [mode, setMode] = useState<ServiceMode>(initialMode);
   const [message, setMessage] = useState("");
@@ -47,9 +48,9 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
         <button
           type="button"
           className={`focus-ring flex items-center gap-3 rounded-lg border px-4 py-4 text-left font-black transition ${
-            mode === "request" ? "border-sky bg-mint" : "border-ink/12 bg-cloud"
+            mode === "REQUEST" ? "border-sky bg-mint" : "border-ink/12 bg-cloud"
           }`}
-          onClick={() => setMode("request")}
+          onClick={() => setMode("REQUEST")}
         >
           <Handshake size={20} aria-hidden="true" />
           Quero contratar
@@ -57,9 +58,9 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
         <button
           type="button"
           className={`focus-ring flex items-center gap-3 rounded-lg border px-4 py-4 text-left font-black transition ${
-            mode === "offer" ? "border-sky bg-mint" : "border-ink/12 bg-cloud"
+            mode === "OFFER" ? "border-sky bg-mint" : "border-ink/12 bg-cloud"
           }`}
-          onClick={() => setMode("offer")}
+          onClick={() => setMode("OFFER")}
         >
           <BriefcaseBusiness size={20} aria-hidden="true" />
           Quero oferecer
@@ -72,10 +73,19 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
           id="title"
           name="title"
           className="field-control"
-          placeholder="Ex: Preciso de ajuda para um evento"
+          placeholder={
+            mode === "REQUEST"
+              ? "Ex: Preciso de editor de vídeos para Reels"
+              : "Ex: Edição de vídeos curtos com entrega em 24h"
+          }
           required
           minLength={6}
         />
+        <span className="text-xs font-semibold text-ink/48">
+          {mode === "REQUEST"
+            ? "Seja específico: diga o que precisa, prazo e local."
+            : "Destaque o benefício: entrega, experiência ou diferencial."}
+        </span>
       </label>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -93,6 +103,9 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
               </option>
             ))}
           </select>
+          <span className="text-xs font-semibold text-ink/48">
+            Escolha a categoria que mais combina com o anúncio.
+          </span>
         </label>
         <label className="grid gap-2 text-sm font-bold text-ink" htmlFor="location">
           Local de atendimento
@@ -103,6 +116,9 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
             placeholder="Cidade ou remoto"
             required
           />
+          <span className="text-xs font-semibold text-ink/48">
+            Use cidade, região ou remoto.
+          </span>
         </label>
         <label className="grid gap-2 text-sm font-bold text-ink" htmlFor="priceLabel">
           Orçamento ou preço
@@ -113,6 +129,9 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
             placeholder="Ex: A combinar ou R$ 150"
             required
           />
+          <span className="text-xs font-semibold text-ink/48">
+            Informe preço fixo, faixa ou a combinar.
+          </span>
         </label>
       </div>
 
@@ -138,11 +157,39 @@ export function ServiceForm({ initialMode = "request" }: { initialMode?: Service
           id="description"
           name="description"
           className="field-control min-h-36 resize-y py-3"
-          placeholder="Explique o que precisa, prazo, disponibilidade, local e qualquer condição importante."
+          placeholder={
+            mode === "REQUEST"
+              ? "Explique o que precisa, prazo, disponibilidade, local e qualquer condição importante."
+              : "Descreva sua experiência, portfólio, como trabalha e por que contratar você."
+          }
           required
           minLength={20}
         />
+        <span className="text-xs font-semibold text-ink/48">
+          {mode === "REQUEST"
+            ? "Quanto mais detalhes, melhor o orçamento que você vai receber."
+            : "Mostre resultados anteriores, prazos e formas de pagamento aceitas."}
+        </span>
       </label>
+
+      <div className="rounded-lg border border-ink/10 bg-cloud p-4">
+        <p className="flex items-center gap-2 text-sm font-black text-ink">
+          <Lightbulb size={16} className="text-sky" aria-hidden="true" />
+          Dicas para anúncios que convertem
+        </p>
+        <ul className="mt-3 grid gap-2 text-xs font-semibold text-ink/62">
+          {[
+            "Use uma foto real do serviço ou resultado.",
+            'Seja claro no preço: "a partir de R$ X" ou "faixa de R$ X a Y".',
+            "Responda rápido para aumentar chance de fechar negócio."
+          ].map((tip) => (
+            <li key={tip} className="flex gap-2">
+              <Sparkles size={14} className="mt-0.5 shrink-0 text-sky" aria-hidden="true" />
+              {tip}
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <label className="flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-dashed border-ink/18 bg-cloud p-4 text-sm font-bold text-ink/70 transition hover:border-sky/45 hover:bg-white">
         <span className="flex items-center gap-3">

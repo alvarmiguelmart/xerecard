@@ -3,7 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ButtonLink } from "@/components/ui/button";
 import { auth } from "@/lib/auth";
-import { ServiceMode } from "@/lib/marketplace-data";
+import type { ServiceMode } from "@prisma/client";
 
 type NewServicePageProps = {
   searchParams?: Promise<{
@@ -14,7 +14,7 @@ type NewServicePageProps = {
 export default async function NewServicePage({ searchParams }: NewServicePageProps) {
   const session = await auth();
   const params = await searchParams;
-  const initialMode: ServiceMode = params?.tipo === "oferecendo" ? "offer" : "request";
+  const initialMode: ServiceMode = params?.tipo === "oferecendo" ? "OFFER" : "REQUEST";
 
   return (
     <>

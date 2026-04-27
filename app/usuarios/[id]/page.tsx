@@ -29,8 +29,8 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
     notFound();
   }
 
-  const requests = profile.services.filter((service) => service.mode === "request");
-  const offers = profile.services.filter((service) => service.mode === "offer");
+  const requests = profile.services.filter((service) => service.mode === "REQUEST");
+  const offers = profile.services.filter((service) => service.mode === "OFFER");
   const memberSince = new Intl.DateTimeFormat("pt-BR", {
     month: "long",
     year: "numeric"

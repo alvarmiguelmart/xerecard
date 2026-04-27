@@ -4,13 +4,13 @@ import { Crown } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { readJsonResponse } from "@/lib/http";
-import { PlanId } from "@/lib/marketplace-data";
+import type { Plan } from "@prisma/client";
 
 export function SubscribeButton({
   plan = "ESSENTIAL",
   method
 }: {
-  plan?: Exclude<PlanId, "FREE">;
+  plan?: Exclude<Plan, "FREE">;
   method: "card" | "pix";
 }) {
   const [message, setMessage] = useState("");

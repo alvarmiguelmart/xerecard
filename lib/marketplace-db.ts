@@ -1,10 +1,7 @@
-import type { Notification, Prisma, Service } from "@prisma/client";
+import type { Notification, Prisma, Service, ServiceMode } from "@prisma/client";
 import {
   AppNotification,
-  MarketplaceService,
-  seedNotifications,
-  seedServices,
-  ServiceMode
+  MarketplaceService
 } from "@/lib/marketplace-data";
 import { normalizeBrazilianWhatsApp } from "@/lib/phone";
 import { prisma } from "@/lib/prisma";
@@ -38,18 +35,21 @@ const adultCategoryHints = [
   "Segurança e privacidade"
 ];
 
-function hasDatabaseConnection() {
-  return Boolean(process.env.DATABASE_URL);
+export class DatabaseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DatabaseError";
+  }
 }
 
 function isAdultCategory(category: string) {
   return adultCategoryHints.some((hint) => category.includes(hint));
 }
 
-function mapService(service: ServiceWithRelations): MarketplaceService {
+export function mapService(service: ServiceWithRelations): MarketplaceService {
   return {
     id: service.id,
-    mode: service.mode === "REQUEST" ? "request" : "offer",
+    mode: service.mode,
     title: service.title,
     category: service.category,
     location: service.location,
@@ -83,127 +83,13 @@ function mapNotification(notification: Notification): AppNotification {
   };
 }
 
-function getSeedPublicProfile(userId: string) {
-  const services = seedServices.filter((service) => service.ownerId === userId);
-
-  if (services.length === 0) {
-    return null;
-  }
-
-  return {
-    id: userId,
-    name: services[0].ownerName,
-    image: services[0].ownerImage,
-    role: "PROFESSIONAL" as const,
-    createdAt: new Date(),
-    serviceCount: services.length,
-    likeCount: services.reduce((total, service) => total + service.likeCount, 0),
-    ratingCount: services.reduce((total, service) => total + service.ratingCount, 0),
-    services
-  };
-}
-
-function hasUsableDatabaseUrl() {
-  const databaseUrl = process.env.DATABASE_URL?.trim();
-
-  if (!databaseUrl) {
-    return false;
-  }
-
-  if (databaseUrl.startsWith("file:")) {
-    return true;
-  }
-
-  try {
-    const parsed = new URL(databaseUrl);
-    return Boolean(parsed.protocol && parsed.hostname);
-  } catch {
-    return false;
-  }
-}
-
-function shouldUseSeedData(error?: unknown) {
-  if (error && process.env.NODE_ENV !== "production") {
-    console.warn("Using seed marketplace data because DATABASE_URL is unavailable.");
-  }
-
-  return seedServices;
-}
-
-async function ensureSeedData() {
-  if (!hasUsableDatabaseUrl()) {
-    throw new Error("DATABASE_URL is not configured for Prisma.");
-  }
-
-  const demoUser = await prisma.user.upsert({
-    where: { email: "demo@xerecard.local" },
-    update: {
-      name: "Equipe Xerecard",
-      image: "/generated/marketplace-hero.png"
-    },
-    create: {
-      name: "Equipe Xerecard",
-      email: "demo@xerecard.local",
-      role: "PROFESSIONAL",
-      plan: "PROFESSIONAL",
-      image: "/generated/marketplace-hero.png"
-    }
-  });
-
-  const existingServices = await prisma.service.findMany({
-    where: { ownerId: demoUser.id },
-    select: { title: true }
-  });
-  const existingTitles = new Set(existingServices.map((service) => service.title));
-  const missingServices = seedServices.filter(
-    (service) => !existingTitles.has(service.title)
-  );
-
-  if (missingServices.length > 0) {
-    await prisma.service.createMany({
-      data: missingServices.map((service) => ({
-        mode: service.mode === "request" ? "REQUEST" : "OFFER",
-        title: service.title,
-        category: service.category,
-        location: service.location,
-        priceLabel: service.priceLabel,
-        description: service.description,
-        whatsapp: normalizeBrazilianWhatsApp(service.whatsapp),
-        imageUrl: service.image,
-        ownerId: demoUser.id
-      }))
-    });
-  }
-
-  const notificationCount = await prisma.notification.count({
-    where: { recipientId: demoUser.id }
-  });
-
-  if (notificationCount === 0) {
-    await prisma.notification.createMany({
-      data: seedNotifications.map((notification) => ({
-        type: notification.unread ? "SERVICE_INTEREST" : "SUBSCRIPTION",
-        title: notification.title,
-        message: notification.description,
-        recipientId: demoUser.id
-      }))
-    });
-  }
-}
-
 const serviceInclude = {
   owner: { select: { id: true, name: true, image: true } },
   _count: { select: { likes: true } }
 } satisfies Prisma.ServiceInclude;
 
 export async function listServices() {
-  if (!hasDatabaseConnection()) {
-    return seedServices;
-  }
-
   try {
-    await ensureSeedData();
-
     const services = await prisma.service.findMany({
       include: serviceInclude,
       orderBy: { createdAt: "desc" }
@@ -211,18 +97,14 @@ export async function listServices() {
 
     return services.map(mapService);
   } catch (error) {
-    return shouldUseSeedData(error);
+    throw new DatabaseError(
+      error instanceof Error ? error.message : "Não foi possível carregar os serviços."
+    );
   }
 }
 
 export async function findService(id: string) {
-  if (!hasDatabaseConnection()) {
-    return seedServices.find((service) => service.id === id) ?? null;
-  }
-
   try {
-    await ensureSeedData();
-
     const service = await prisma.service.findUnique({
       where: { id },
       include: serviceInclude
@@ -230,18 +112,23 @@ export async function findService(id: string) {
 
     return service ? mapService(service) : null;
   } catch (error) {
-    shouldUseSeedData(error);
-    return seedServices.find((service) => service.id === id) ?? null;
+    throw new DatabaseError(
+      error instanceof Error ? error.message : "Não foi possível carregar o serviço."
+    );
   }
 }
 
 export async function findRawService(id: string) {
-  await ensureSeedData();
-
-  return prisma.service.findUnique({
-    where: { id },
-    include: { owner: true }
-  });
+  try {
+    return await prisma.service.findUnique({
+      where: { id },
+      include: { owner: true }
+    });
+  } catch (error) {
+    throw new DatabaseError(
+      error instanceof Error ? error.message : "Não foi possível carregar o serviço."
+    );
+  }
 }
 
 export async function createService(input: {
@@ -255,15 +142,21 @@ export async function createService(input: {
   ownerId: string;
   imageUrl: string;
 }) {
+  const whatsapp = normalizeBrazilianWhatsApp(input.whatsapp);
+
+  if (!whatsapp) {
+    throw new Error("WhatsApp inválido.");
+  }
+
   const service = await prisma.service.create({
     data: {
-      mode: input.mode === "request" ? "REQUEST" : "OFFER",
+      mode: input.mode,
       title: input.title,
       category: input.category,
       location: input.location,
       priceLabel: input.priceLabel,
       description: input.description,
-      whatsapp: normalizeBrazilianWhatsApp(input.whatsapp),
+      whatsapp,
       ownerId: input.ownerId,
       imageUrl: input.imageUrl
     },
@@ -280,34 +173,37 @@ export async function createService(input: {
   return mapService(service);
 }
 
-export async function listNotifications(userId: string) {
-  if (!hasDatabaseConnection()) {
-    return seedNotifications;
-  }
-
+export async function listNotifications({
+  userId,
+  cursor,
+  take = 20
+}: {
+  userId: string;
+  cursor?: string;
+  take?: number;
+}) {
   try {
     const notifications = await prisma.notification.findMany({
+      take,
+      skip: cursor ? 1 : 0,
+      cursor: cursor ? { id: cursor } : undefined,
       where: { recipientId: userId },
       orderBy: { createdAt: "desc" }
     });
 
-    return notifications.map(mapNotification);
-  } catch {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("Using seed notifications because DATABASE_URL is unavailable.");
-    }
-    return seedNotifications;
+    return {
+      notifications: notifications.map(mapNotification),
+      nextCursor: notifications.length === take ? notifications.at(-1)?.id ?? null : null
+    };
+  } catch (error) {
+    throw new DatabaseError(
+      error instanceof Error ? error.message : "Não foi possível carregar as notificações."
+    );
   }
 }
 
 export async function findPublicProfile(userId: string) {
-  if (!hasDatabaseConnection()) {
-    return getSeedPublicProfile(userId);
-  }
-
   try {
-    await ensureSeedData();
-
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -344,8 +240,9 @@ export async function findPublicProfile(userId: string) {
       services
     };
   } catch (error) {
-    shouldUseSeedData(error);
-    return getSeedPublicProfile(userId);
+    throw new DatabaseError(
+      error instanceof Error ? error.message : "Não foi possível carregar o perfil."
+    );
   }
 }
 

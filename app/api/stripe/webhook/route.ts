@@ -30,8 +30,20 @@ export async function POST(request: Request) {
       const checkout = event.data.object;
       const userId = checkout.metadata?.userId;
       const plan = normalizePaidPlan(checkout.metadata?.plan);
+      const customerId = typeof checkout.customer === "string" ? checkout.customer : null;
+      const subscriptionId =
+        typeof checkout.subscription === "string" ? checkout.subscription : undefined;
 
-      if (userId) {
+      if (userId && customerId && checkout.payment_status === "paid") {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { stripeCustomerId: true }
+        });
+
+        if (!user || (user.stripeCustomerId && user.stripeCustomerId !== customerId)) {
+          return NextResponse.json({ received: true });
+        }
+
         const planExpiresAt =
           checkout.mode === "payment"
             ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -42,12 +54,8 @@ export async function POST(request: Request) {
           data: {
             plan,
             planExpiresAt,
-            stripeCustomerId:
-              typeof checkout.customer === "string" ? checkout.customer : undefined,
-            stripeSubscriptionId:
-              typeof checkout.subscription === "string"
-                ? checkout.subscription
-                : undefined
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscriptionId
           }
         });
 

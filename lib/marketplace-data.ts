@@ -1,6 +1,4 @@
-export type UserRole = "cliente" | "profissional";
-export type PlanId = "FREE" | "ESSENTIAL" | "PROFESSIONAL";
-export type ServiceMode = "request" | "offer";
+import type { Plan, ServiceMode } from "@prisma/client";
 
 export type MarketplaceService = {
   id: string;
@@ -55,7 +53,7 @@ export const plans = [
     features: ["Mais destaque na listagem", "Selo de perfil verificado", "Avisos com prioridade"]
   }
 ] as const satisfies Array<{
-  id: PlanId;
+  id: Plan;
   name: string;
   price: string;
   description: string;
@@ -81,10 +79,29 @@ export const categories = [
   "Entrega e mudanças"
 ] as const;
 
+export const categoryMeta: Record<string, { color: string; description: string; icon: string }> = {
+  "Casa e manutenção": { color: "#087f3a", description: "Reparos, organização e cuidados", icon: "home" },
+  "Eventos": { color: "#2558d9", description: "Recepção, organização e apoio", icon: "calendar" },
+  "Beleza e bem-estar": { color: "#ff4f87", description: "Cuidados pessoais e estética", icon: "heart" },
+  "Tecnologia": { color: "#2558d9", description: "Sites, apps e suporte", icon: "code" },
+  "Aulas e consultoria": { color: "#ffe86b", description: "Ensino e orientação", icon: "book" },
+  "Transporte": { color: "#087f3a", description: "Carretos e locomoção", icon: "truck" },
+  "Construção e reforma": { color: "#071014", description: "Obras e reparos estruturais", icon: "hammer" },
+  "Limpeza e diarista": { color: "#00e10b", description: "Limpeza e organização", icon: "sparkles" },
+  "Saúde e cuidados": { color: "#ff6a3d", description: "Assistência e bem-estar", icon: "shield" },
+  "Pet care": { color: "#087f3a", description: "Cuidados com animais", icon: "paw" },
+  "Design e marketing": { color: "#2558d9", description: "Identidade e divulgação", icon: "palette" },
+  "Serviços automotivos": { color: "#071014", description: "Mecânica e estética", icon: "wrench" },
+  "Jurídico e contábil": { color: "#087f3a", description: "Consultoria especializada", icon: "scale" },
+  "Gastronomia": { color: "#ff6a3d", description: "Buffet e delivery", icon: "utensils" },
+  "Fotografia e vídeo": { color: "#2558d9", description: "Ensaios e produções", icon: "camera" },
+  "Entrega e mudanças": { color: "#087f3a", description: "Transporte de cargas", icon: "package" }
+};
+
 export const seedServices: MarketplaceService[] = [
   {
     id: "1",
-    mode: "request",
+    mode: "REQUEST",
     title: "Procuro apoio para evento no sábado",
     category: "Eventos",
     location: "Irati, PR",
@@ -104,7 +121,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "2",
-    mode: "request",
+    mode: "REQUEST",
     title: "Preciso de manutenção residencial",
     category: "Casa e manutenção",
     location: "Centro",
@@ -124,7 +141,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "3",
-    mode: "request",
+    mode: "REQUEST",
     title: "Procuro suporte para site e redes sociais",
     category: "Tecnologia",
     location: "Remoto",
@@ -144,7 +161,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "4",
-    mode: "offer",
+    mode: "OFFER",
     title: "Serviços gerais com agenda flexível",
     category: "Casa e manutenção",
     location: "Irati e região",
@@ -164,7 +181,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "5",
-    mode: "offer",
+    mode: "OFFER",
     title: "Apoio para eventos e recepção",
     category: "Eventos",
     location: "Região central",
@@ -184,7 +201,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "6",
-    mode: "offer",
+    mode: "OFFER",
     title: "Consultoria rápida para presença online",
     category: "Tecnologia",
     location: "Online",
@@ -204,7 +221,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "7",
-    mode: "request",
+    mode: "REQUEST",
     title: "Procuro diarista para apartamento",
     category: "Limpeza e diarista",
     location: "Irati, PR",
@@ -224,7 +241,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "8",
-    mode: "request",
+    mode: "REQUEST",
     title: "Procuro fotógrafo para fotos profissionais",
     category: "Fotografia e vídeo",
     location: "Centro",
@@ -244,7 +261,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "9",
-    mode: "offer",
+    mode: "OFFER",
     title: "Diarista com referências e agenda semanal",
     category: "Limpeza e diarista",
     location: "Irati e região",
@@ -264,7 +281,7 @@ export const seedServices: MarketplaceService[] = [
   },
   {
     id: "10",
-    mode: "offer",
+    mode: "OFFER",
     title: "Design para posts, cartões e identidade visual",
     category: "Design e marketing",
     location: "Remoto",

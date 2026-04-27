@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { readJsonResponse } from "@/lib/http";
-import { UserRole } from "@/lib/marketplace-data";
+import type { UserRole } from "@prisma/client";
 
 type AuthMode = "login" | "register";
 
@@ -144,18 +144,18 @@ export function AuthForm({
         <fieldset className="grid gap-3">
           <legend className="text-sm font-bold text-ink">Como você quer usar?</legend>
           <div className="grid grid-cols-2 gap-3">
-            {(["cliente", "profissional"] satisfies UserRole[]).map((role) => (
+            {(["CLIENT", "PROFESSIONAL"] satisfies UserRole[]).map((role) => (
               <label key={role} className="group cursor-pointer">
                 <input
                   type="radio"
                   name="role"
                   value={role}
                   className="peer sr-only"
-                  defaultChecked={role === "cliente"}
+                  defaultChecked={role === "CLIENT"}
                 />
                 <span className="focus-ring flex items-center justify-center gap-2 rounded-lg border border-ink/12 bg-white px-3 py-3 text-sm font-black capitalize text-ink transition peer-checked:border-sky peer-checked:bg-mint peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-acid group-hover:bg-cloud">
                   <UserRound size={16} aria-hidden="true" />
-                  {role}
+                  {role === "CLIENT" ? "cliente" : "profissional"}
                 </span>
               </label>
             ))}

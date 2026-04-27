@@ -44,7 +44,7 @@ export default async function AccountPage() {
           {session ? (
             <div className="mt-8 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
               <aside className="overflow-hidden rounded-xl border border-ink/10 bg-white premium-shadow">
-                <div className="h-24 bg-[linear-gradient(135deg,#76f28f_0%,#f5f8f1_55%,#12231b_100%)]" />
+                <div className="h-24 bg-[linear-gradient(135deg,#4caf50_0%,#f5f8f1_55%,#12231b_100%)]" />
                 <div className="p-6 pt-0">
                   <UserAvatar
                     name={profileName}

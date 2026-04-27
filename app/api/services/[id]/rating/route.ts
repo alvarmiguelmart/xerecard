@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createNotification, findRawService } from "@/lib/marketplace-db";
 import { prisma } from "@/lib/prisma";
+import { createRatingSchema } from "@/lib/validations";
 
 type RatingRouteContext = {
   params: Promise<{
@@ -28,11 +29,22 @@ export async function POST(request: Request, context: RatingRouteContext) {
   }
 
   const body = (await request.json().catch(() => null)) as RatingPayload | null;
-  const score = Number(body?.score);
+  const parsed = createRatingSchema.safeParse({
+    serviceId: id,
+    rating: Number(body?.score)
+  });
 
-  if (!Number.isInteger(score) || score < 1 || score > 5) {
-    return NextResponse.json({ message: "Informe uma nota de 1 a 5." }, { status: 400 });
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        message: "Informe uma nota de 1 a 5.",
+        errors: parsed.error.flatten().fieldErrors
+      },
+      { status: 400 }
+    );
   }
+
+  const score = parsed.data.rating;
 
   await prisma.rating.upsert({
     where: {

@@ -7,11 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
     "db:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\",\"types\":[\"node\"]} prisma/seed.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -27,15 +31,20 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.2.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "25.6.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.4",
+    "next-test-api-route-handler": "^5.0.4",
     "postcss": "8.5.10",
     "prisma": "^6.19.3",
     "tailwindcss": "4.2.4",
-    "typescript": "6.0.3"
+    "ts-node": "^10.9.2",
+    "typescript": "6.0.3",
+    "vitest": "^4.1.5"
   },
   "overrides": {
     "postcss": "8.5.10"

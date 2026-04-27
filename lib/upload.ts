@@ -13,6 +13,23 @@ const allowedImageTypes = {
   "image/avif": "avif"
 } as const;
 
+function hasImageSignature(buffer: Buffer, type: keyof typeof allowedImageTypes) {
+  switch (type) {
+    case "image/jpeg":
+      return buffer.length > 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+    case "image/png":
+      return buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    case "image/webp":
+      return buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP";
+    case "image/gif":
+      return buffer.subarray(0, 6).toString("ascii") === "GIF87a" || buffer.subarray(0, 6).toString("ascii") === "GIF89a";
+    case "image/avif":
+      return buffer.subarray(4, 8).toString("ascii") === "ftyp" && buffer.subarray(8, 16).toString("ascii").includes("avif");
+    default:
+      return false;
+  }
+}
+
 function getStorageConfig() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.SUPABASE_SECRET_KEY;
@@ -52,7 +69,8 @@ async function ensureStorageBucket(url: string, key: string) {
 }
 
 export async function saveUpload(file: File, folder: "profiles" | "services") {
-  const extension = allowedImageTypes[file.type as keyof typeof allowedImageTypes];
+  const fileType = file.type as keyof typeof allowedImageTypes;
+  const extension = allowedImageTypes[fileType];
 
   if (!extension) {
     throw new Error("Envie uma imagem JPG, PNG, WebP, GIF ou AVIF.");
@@ -65,6 +83,10 @@ export async function saveUpload(file: File, folder: "profiles" | "services") {
   const fileName = `${Date.now()}-${randomUUID()}.${extension}`;
   const storageConfig = getStorageConfig();
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (!hasImageSignature(buffer, fileType)) {
+    throw new Error("O arquivo enviado não parece ser uma imagem válida.");
+  }
 
   if (storageConfig) {
     const objectPath = `${folder}/${fileName}`;

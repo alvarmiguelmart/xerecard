@@ -26,7 +26,7 @@ export function ServiceCard({ service }: { service: MarketplaceService }) {
           className="object-cover transition duration-300 group-hover:scale-[1.03]"
         />
         <span className="absolute left-3 top-3 rounded-full bg-white/92 px-3 py-1 text-xs font-black uppercase text-ink shadow-sm backdrop-blur">
-          {service.mode === "request" ? "Pedido" : "Oferta"}
+          {service.mode === "REQUEST" ? "Pedido" : "Oferta"}
         </span>
         {service.verified ? (
           <span className="absolute right-3 top-3 grid size-9 place-items-center rounded-full bg-mint text-sky shadow-sm">

@@ -44,9 +44,18 @@ export async function POST(_request: Request, context: ContactRouteContext) {
     });
   }
 
+  const dialNumber = toWhatsAppDialNumber(service.whatsapp);
+
+  if (!dialNumber) {
+    return NextResponse.json(
+      { message: "WhatsApp do anúncio está inválido." },
+      { status: 422 }
+    );
+  }
+
   const text = encodeURIComponent(`Olá, vi seu anúncio no Xerecard: ${service.title}`);
   return NextResponse.json({
     ok: true,
-    url: `https://wa.me/${toWhatsAppDialNumber(service.whatsapp)}?text=${text}`
+    url: `https://wa.me/${dialNumber}?text=${text}`
   });
 }

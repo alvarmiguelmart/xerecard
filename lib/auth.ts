@@ -1,10 +1,10 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import type { Plan, UserRole } from "@prisma/client";
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { z } from "zod";
+import { jwtCallback, sessionCallback } from "@/lib/auth-callbacks";
 import { prisma } from "@/lib/prisma";
 
 const credentialsSchema = z.object({
@@ -68,44 +68,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login"
   },
   callbacks: {
-    async jwt({ token, user }) {
-      const email = user?.email ?? token.email;
-
-      if (!email) {
-        return token;
-      }
-
-      const dbUser = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true, role: true, plan: true, image: true, name: true }
-      });
-
-      if (dbUser) {
-        token.id = dbUser.id;
-        token.role = dbUser.role;
-        token.plan = dbUser.plan;
-        token.picture = dbUser.image ?? token.picture;
-        token.name = dbUser.name ?? token.name;
-      }
-
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = typeof token.id === "string" ? token.id : "";
-        session.user.role =
-          token.role === "PROFESSIONAL" ? "PROFESSIONAL" : ("CLIENT" satisfies UserRole);
-        session.user.plan =
-          token.plan === "ESSENTIAL" || token.plan === "PROFESSIONAL"
-            ? (token.plan satisfies Plan)
-            : ("FREE" satisfies Plan);
-        session.user.name = typeof token.name === "string" ? token.name : null;
-        session.user.image =
-          typeof token.picture === "string" ? token.picture : null;
-      }
-
-      return session;
-    }
+    jwt: jwtCallback,
+    session: sessionCallback
   },
   events: {
     async createUser({ user }) {

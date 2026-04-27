@@ -1,12 +1,24 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { createService, listServices } from "@/lib/marketplace-db";
-import { ServiceMode } from "@/lib/marketplace-data";
+import { createService, DatabaseError, listServices } from "@/lib/marketplace-db";
 import { normalizeBrazilianWhatsApp } from "@/lib/phone";
 import { saveUpload } from "@/lib/upload";
+import { createServiceSchema } from "@/lib/validations";
+import type { ServiceMode } from "@prisma/client";
 
 export async function GET() {
-  return NextResponse.json({ services: await listServices() });
+  try {
+    return NextResponse.json({ services: await listServices() });
+  } catch (error) {
+    if (error instanceof DatabaseError) {
+      return NextResponse.json(
+        { message: "Serviços temporariamente indisponíveis." },
+        { status: 503 }
+      );
+    }
+
+    throw error;
+  }
 }
 
 export async function POST(request: Request) {
@@ -20,7 +32,7 @@ export async function POST(request: Request) {
   }
 
   const formData = await request.formData();
-  const mode: ServiceMode = formData.get("mode") === "offer" ? "offer" : "request";
+  const mode: ServiceMode = formData.get("mode") === "OFFER" ? "OFFER" : "REQUEST";
   const title = String(formData.get("title") ?? "").trim();
   const category = String(formData.get("category") ?? "").trim();
   const location = String(formData.get("location") ?? "").trim();
@@ -30,39 +42,45 @@ export async function POST(request: Request) {
   const whatsappDigits = normalizeBrazilianWhatsApp(whatsapp);
   const photo = formData.get("photos");
 
-  if (
-    title.length < 6 ||
-    category.length < 2 ||
-    location.length < 2 ||
-    priceLabel.length < 2 ||
-    description.length < 20 ||
-    whatsappDigits.length < 10 ||
-    whatsappDigits.length > 11
-  ) {
+  const parsed = createServiceSchema.safeParse({
+    mode,
+    title,
+    category,
+    categories: [category],
+    location,
+    priceLabel,
+    description,
+    whatsapp: whatsappDigits ?? ""
+  });
+
+  if (!parsed.success) {
     return NextResponse.json(
-      { message: "Preencha todos os campos. No WhatsApp, informe DDD e número, sem código do país." },
+      {
+        message: "Preencha todos os campos com dados válidos.",
+        errors: parsed.error.flatten().fieldErrors
+      },
       { status: 400 }
     );
   }
 
   let imageUrl =
-    mode === "request" ? "/generated/service-request.png" : "/generated/service-offer.png";
+    mode === "REQUEST" ? "/generated/service-request.png" : "/generated/service-offer.png";
 
   if (photo instanceof File && photo.size > 0) {
     imageUrl = await saveUpload(photo, "services");
   }
 
   const service = await createService({
-    mode,
-    title,
-    category,
-    location,
-    priceLabel,
-    description,
-    whatsapp,
+    mode: parsed.data.mode,
+    title: parsed.data.title,
+    category: parsed.data.category,
+    location: parsed.data.location,
+    priceLabel: parsed.data.priceLabel,
+    description: parsed.data.description,
+    whatsapp: parsed.data.whatsapp,
     ownerId: session.user.id,
     imageUrl
   });
 
-  return NextResponse.json({ ok: true, service });
+  return NextResponse.json({ ok: true, service }, { status: 201 });
 }

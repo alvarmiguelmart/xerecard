@@ -1,19 +1,19 @@
 export function normalizeBrazilianWhatsApp(input: string) {
   const digits = input.replace(/\D/g, "");
+  const withCountryCode =
+    digits.startsWith("55") && (digits.length === 12 || digits.length === 13)
+      ? digits
+      : digits.length === 10 || digits.length === 11
+        ? `55${digits}`
+        : "";
 
-  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
-    return digits.slice(2);
+  if (/^55[1-9][1-9]9?\d{8}$/.test(withCountryCode)) {
+    return withCountryCode;
   }
 
-  return digits;
+  return null;
 }
 
 export function toWhatsAppDialNumber(input: string) {
-  const digits = normalizeBrazilianWhatsApp(input);
-
-  if (digits.length === 10 || digits.length === 11) {
-    return `55${digits}`;
-  }
-
-  return digits;
+  return normalizeBrazilianWhatsApp(input);
 }

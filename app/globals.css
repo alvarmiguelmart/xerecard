@@ -2,25 +2,25 @@
 
 @theme {
   --font-sans: "Inter", "Satoshi", "Segoe UI", system-ui, sans-serif;
-  --color-ink: #071014;
-  --color-panel: #12231b;
-  --color-paper: #f5f8f1;
-  --color-cloud: #eaf3e7;
-  --color-line: #d5e1d2;
+  --color-ink: #edf7ef;
+  --color-panel: #09110d;
+  --color-paper: #0d1712;
+  --color-cloud: #14241b;
+  --color-line: #284033;
   --color-coral: #ff6a3d;
   --color-rose: #ff4f87;
-  --color-mint: #76f28f;
-  --color-acid: #00e10b;
-  --color-sky: #087f3a;
+  --color-mint: #4ade80;
+  --color-acid: #22c55e;
+  --color-sky: #38bdf8;
   --color-gold: #ffe86b;
   --color-blue: #2558d9;
-  --color-lilac: #eef0ff;
+  --color-lilac: #1a2030;
 }
 
 :root {
-  color-scheme: light;
-  --background: #f5f8f1;
-  --foreground: #071014;
+  color-scheme: dark;
+  --background: #0d1712;
+  --foreground: #edf7ef;
 }
 
 * {
@@ -50,8 +50,8 @@ select {
 }
 
 ::selection {
-  background: #70ef89;
-  color: #071014;
+  background: #4ade80;
+  color: #06100b;
 }
 
 .container-page {
@@ -71,39 +71,39 @@ select {
 }
 
 .focus-ring:focus-visible {
-  outline-color: #00e10b;
+  outline-color: #4ade80;
 }
 
 .surface-grid {
   background-image:
-    radial-gradient(circle at 20% 10%, rgba(118, 242, 143, 0.55), transparent 28rem),
-    radial-gradient(circle at 90% 20%, rgba(255, 232, 107, 0.35), transparent 24rem),
-    linear-gradient(rgba(7, 16, 20, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(7, 16, 20, 0.045) 1px, transparent 1px);
+    radial-gradient(circle at 20% 10%, rgba(74, 222, 128, 0.18), transparent 28rem),
+    radial-gradient(circle at 90% 20%, rgba(56, 189, 248, 0.12), transparent 24rem),
+    linear-gradient(rgba(237, 247, 239, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(237, 247, 239, 0.05) 1px, transparent 1px);
   background-size: auto, auto, 42px 42px, 42px 42px;
 }
 
 .soft-shadow {
-  box-shadow: 0 12px 30px rgba(7, 16, 20, 0.07);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.34);
 }
 
 .premium-shadow {
-  box-shadow: 0 20px 58px rgba(7, 16, 20, 0.11);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44);
 }
 
 .card-surface {
-  border: 1px solid rgba(7, 16, 20, 0.09);
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow: 0 12px 36px rgba(7, 16, 20, 0.08);
+  border: 1px solid rgba(237, 247, 239, 0.1);
+  background: rgba(17, 28, 22, 0.9);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.36);
 }
 
 .field-control {
   min-height: 3rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(7, 16, 20, 0.12);
-  background: #f8fbf6;
+  border: 1px solid rgba(237, 247, 239, 0.14);
+  background: #0b1410;
   padding-inline: 1rem;
-  color: #071014;
+  color: #edf7ef;
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
 
@@ -112,12 +112,12 @@ select {
 }
 
 .field-control:hover {
-  border-color: rgba(7, 16, 20, 0.22);
-  background: #fff;
+  border-color: rgba(237, 247, 239, 0.28);
+  background: #101d16;
 }
 
 .field-control:focus-visible {
-  outline: 2px solid #00e10b;
+  outline: 2px solid #4ade80;
   outline-offset: 2px;
 }
 
@@ -126,7 +126,61 @@ select {
   font-weight: 900;
   letter-spacing: 0;
   text-transform: uppercase;
-  color: #087f3a;
+  color: #4ade80;
+}
+
+.bg-white {
+  background-color: #111c16 !important;
+}
+
+.bg-white\/70 {
+  background-color: rgb(17 28 22 / 0.7) !important;
+}
+
+.bg-white\/80 {
+  background-color: rgb(17 28 22 / 0.8) !important;
+}
+
+.bg-white\/82 {
+  background-color: rgb(17 28 22 / 0.82) !important;
+}
+
+.bg-white\/92 {
+  background-color: rgb(17 28 22 / 0.92) !important;
+}
+
+.bg-white\/8 {
+  background-color: rgb(237 247 239 / 0.08) !important;
+}
+
+.bg-ink {
+  background-color: #06100b !important;
+}
+
+.bg-mint.text-ink,
+.bg-acid.text-ink {
+  color: #06100b !important;
+}
+
+.from-ink {
+  --tw-gradient-from: #06100b var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(6 16 11 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.border-ink\/10,
+.border-ink\/12 {
+  border-color: rgb(237 247 239 / 0.12) !important;
+}
+
+.hover\:bg-white:hover,
+.hover\:bg-white\/60:hover {
+  background-color: rgb(23 39 30 / 0.95) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgb(237 247 239 / 0.42);
 }
 
 .hide-scrollbar {
