@@ -50,7 +50,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
           <div className="rounded-2xl border border-ink/10 bg-white p-6 premium-shadow">
             <div className="flex flex-wrap items-center gap-3">
               <span className="rounded-full bg-mint px-3 py-1 text-xs font-black uppercase text-ink">
-                {service.isAdult ? "+18" : service.mode === "request" ? "Pedido" : "Oferta"}
+                {service.mode === "request" ? "Pedido de serviço" : "Oferta de serviço"}
               </span>
               {service.verified ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-cloud px-3 py-1 text-xs font-black text-sky">
@@ -73,7 +73,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
                 />
                 <div>
                   <p className="text-sm font-black text-ink">{service.ownerName}</p>
-                  <p className="text-xs font-bold text-ink/50">Responsável pela publicação</p>
+                  <p className="text-xs font-bold text-ink/50">Responsável pelo anúncio</p>
                 </div>
               </div>
               <ButtonLink
@@ -104,7 +104,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
 
             <div className="mt-6 grid gap-3 rounded-xl bg-cloud p-4">
               <p className="text-sm font-black uppercase text-ink/50">
-                Valor informado
+                Valor ou orçamento
               </p>
               <p className="text-3xl font-black text-ink">{service.priceLabel}</p>
             </div>
@@ -133,7 +133,7 @@ export default async function ServiceDetailPage({ params }: ServiceDetailPagePro
               <div className="grid gap-3">
                 <LikeButton serviceId={service.id} initialCount={service.likeCount} />
                 <ButtonLink href="/servicos" variant="secondary" size="lg">
-                  Voltar
+                  Voltar ao marketplace
                 </ButtonLink>
               </div>
             </div>

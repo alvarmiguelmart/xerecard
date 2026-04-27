@@ -103,7 +103,38 @@ function getSeedPublicProfile(userId: string) {
   };
 }
 
+function hasUsableDatabaseUrl() {
+  const databaseUrl = process.env.DATABASE_URL?.trim();
+
+  if (!databaseUrl) {
+    return false;
+  }
+
+  if (databaseUrl.startsWith("file:")) {
+    return true;
+  }
+
+  try {
+    const parsed = new URL(databaseUrl);
+    return Boolean(parsed.protocol && parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function shouldUseSeedData(error?: unknown) {
+  if (error && process.env.NODE_ENV !== "production") {
+    console.warn("Using seed marketplace data because DATABASE_URL is unavailable.");
+  }
+
+  return seedServices;
+}
+
 async function ensureSeedData() {
+  if (!hasUsableDatabaseUrl()) {
+    throw new Error("DATABASE_URL is not configured for Prisma.");
+  }
+
   const demoUser = await prisma.user.upsert({
     where: { email: "demo@xerecard.local" },
     update: {
@@ -180,8 +211,7 @@ export async function listServices() {
 
     return services.map(mapService);
   } catch (error) {
-    console.error("Falling back to seed services", error);
-    return seedServices;
+    return shouldUseSeedData(error);
   }
 }
 
@@ -200,7 +230,7 @@ export async function findService(id: string) {
 
     return service ? mapService(service) : null;
   } catch (error) {
-    console.error("Falling back to seed service", error);
+    shouldUseSeedData(error);
     return seedServices.find((service) => service.id === id) ?? null;
   }
 }
@@ -243,7 +273,7 @@ export async function createService(input: {
   await createNotification({
     recipientId: input.ownerId,
     type: "SERVICE_PUBLISHED",
-    title: "Sua publicação está no ar",
+    title: "Seu anúncio está no ar",
     message: `${service.title} já aparece no marketplace.`
   });
 
@@ -262,8 +292,10 @@ export async function listNotifications(userId: string) {
     });
 
     return notifications.map(mapNotification);
-  } catch (error) {
-    console.error("Falling back to seed notifications", error);
+  } catch {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("Using seed notifications because DATABASE_URL is unavailable.");
+    }
     return seedNotifications;
   }
 }
@@ -312,7 +344,7 @@ export async function findPublicProfile(userId: string) {
       services
     };
   } catch (error) {
-    console.error("Falling back to seed profile", error);
+    shouldUseSeedData(error);
     return getSeedPublicProfile(userId);
   }
 }

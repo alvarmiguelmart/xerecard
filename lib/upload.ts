@@ -48,7 +48,7 @@ async function ensureStorageBucket(url: string, key: string) {
     return;
   }
 
-  throw new Error("Não foi possível preparar o armazenamento da imagem.");
+  throw new Error("Não conseguimos preparar o envio da imagem.");
 }
 
 export async function saveUpload(file: File, folder: "profiles" | "services") {
@@ -86,7 +86,7 @@ export async function saveUpload(file: File, folder: "profiles" | "services") {
     );
 
     if (!response.ok) {
-      throw new Error("Não foi possível salvar a imagem.");
+      throw new Error("Não conseguimos salvar a imagem.");
     }
 
     return `${storageConfig.url}/storage/v1/object/public/${storageBucket}/${objectPath}`;

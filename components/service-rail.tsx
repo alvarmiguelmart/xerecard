@@ -16,15 +16,18 @@ export function ServiceRail({
   }
 
   return (
-    <section className="mt-10" aria-labelledby={titleId}>
+    <section className="mt-12" aria-labelledby={titleId}>
       <div className="flex items-center justify-between gap-4">
         <h2 id={titleId} className="text-3xl font-black text-ink">
           {title}
         </h2>
-        <ArrowRight className="hidden text-ink/35 md:block" size={24} aria-hidden="true" />
+        <div className="hidden items-center gap-2 text-sm font-black text-ink/45 md:flex">
+          deslize para ver mais
+          <ArrowRight size={19} aria-hidden="true" />
+        </div>
       </div>
 
-      <div className="mt-5 flex snap-x gap-5 overflow-x-auto pb-4 pr-4">
+      <div className="hide-scrollbar mt-5 flex snap-x gap-5 overflow-x-auto pb-5 pr-4">
         {services.map((service) => (
           <div
             key={service.id}

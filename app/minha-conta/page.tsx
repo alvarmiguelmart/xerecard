@@ -1,4 +1,12 @@
-import { Crown, LockKeyhole } from "lucide-react";
+import {
+  BadgeCheck,
+  Camera,
+  Crown,
+  LockKeyhole,
+  MessageCircle,
+  ShieldCheck,
+  UserRound
+} from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 import { ProfilePhotoForm } from "@/components/profile-photo-form";
 import { SiteFooter } from "@/components/site-footer";
@@ -12,6 +20,10 @@ import { plans } from "@/lib/marketplace-data";
 export default async function AccountPage() {
   const session = await auth();
   const activePlan = plans.find((plan) => plan.id === session?.user.plan) ?? plans[0];
+  const hasPaidPlan =
+    session?.user.plan === "ESSENTIAL" || session?.user.plan === "PROFESSIONAL";
+  const profileName = session?.user.name ?? "Usuário Xerecard";
+  const profileRole = session?.user.role === "PROFESSIONAL" ? "profissional" : "cliente";
 
   return (
     <>
@@ -19,37 +31,71 @@ export default async function AccountPage() {
       <main className="bg-paper py-12">
         <section className="container-page">
           <div>
-            <p className="text-sm font-black uppercase text-sky">Minha conta</p>
-            <h1 className="mt-2 text-5xl font-black text-ink">
-              Assinatura e perfil.
+            <p className="section-label">Minha conta</p>
+            <h1 className="mt-2 text-4xl font-black leading-tight text-ink md:text-5xl">
+              Perfil, assinatura e contatos.
             </h1>
+            <p className="mt-3 max-w-2xl text-base font-semibold leading-7 text-ink/58">
+              Mantenha seu perfil apresentável, acompanhe o plano ativo e deixe
+              seus anúncios prontos para receber conversas.
+            </p>
           </div>
 
           {session ? (
             <div className="mt-8 grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
-              <aside className="rounded-xl border border-ink/10 bg-white p-6 premium-shadow">
-                <UserAvatar
-                  name={session.user.name ?? "Usuário Xerecard"}
-                  image={session.user.image}
-                  size="lg"
-                />
-                <h2 className="mt-5 text-2xl font-black text-ink">
-                  {session.user.name ?? "Usuário Xerecard"}
-                </h2>
-                <p className="mt-1 text-sm font-semibold text-ink/56">
-                  {session.user.email}
-                </p>
-                <p className="mt-4 rounded-full bg-cloud px-3 py-2 text-sm font-black capitalize text-ink">
-                  Perfil: {session.user.role === "PROFESSIONAL" ? "profissional" : "cliente"}
-                </p>
-                <div className="mt-6">
-                  <LogoutButton />
-                </div>
-                <div className="mt-6 border-t border-ink/10 pt-6">
-                  <ProfilePhotoForm
-                    name={session.user.name ?? "Usuário Xerecard"}
+              <aside className="overflow-hidden rounded-xl border border-ink/10 bg-white premium-shadow">
+                <div className="h-24 bg-[linear-gradient(135deg,#76f28f_0%,#f5f8f1_55%,#12231b_100%)]" />
+                <div className="p-6 pt-0">
+                  <UserAvatar
+                    name={profileName}
                     image={session.user.image}
+                    size="xl"
+                    className="-mt-12 ring-4 ring-white"
                   />
+                  <h2 className="mt-5 text-2xl font-black text-ink">
+                    {profileName}
+                  </h2>
+                  <p className="mt-1 break-all text-sm font-semibold text-ink/56">
+                    {session.user.email}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <p className="inline-flex items-center gap-2 rounded-full bg-cloud px-3 py-2 text-sm font-black capitalize text-ink">
+                      <UserRound size={16} aria-hidden="true" />
+                      {profileRole}
+                    </p>
+                    <p className="inline-flex items-center gap-2 rounded-full bg-mint px-3 py-2 text-sm font-black text-ink">
+                      {hasPaidPlan ? (
+                        <BadgeCheck size={16} aria-hidden="true" />
+                      ) : (
+                        <ShieldCheck size={16} aria-hidden="true" />
+                      )}
+                      {hasPaidPlan ? "Contato ativo" : "Plano grátis"}
+                    </p>
+                  </div>
+
+                  <div className="mt-6 grid gap-3">
+                    <div className="rounded-xl bg-cloud p-4">
+                      <p className="flex items-center gap-2 text-sm font-black uppercase text-ink/50">
+                        <Camera size={16} aria-hidden="true" />
+                        Qualidade do perfil
+                      </p>
+                      <p className="mt-2 text-sm font-semibold leading-6 text-ink/62">
+                        Foto e nome atualizados aumentam a confiança antes do
+                        contato.
+                      </p>
+                    </div>
+                    <LogoutButton />
+                  </div>
+                </div>
+
+                <div className="mt-6 border-t border-ink/10 pt-6">
+                  <div className="px-6 pb-6">
+                    <ProfilePhotoForm
+                      name={profileName}
+                      image={session.user.image}
+                    />
+                  </div>
                 </div>
               </aside>
 
@@ -58,7 +104,7 @@ export default async function AccountPage() {
                   <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                     <div>
                       <p className="text-sm font-black uppercase text-ink/48">
-                        Plano atual
+                        Seu plano
                       </p>
                       <h2 className="mt-2 text-4xl font-black text-ink">
                         {activePlan.name}
@@ -70,7 +116,7 @@ export default async function AccountPage() {
                         {activePlan.description}
                       </p>
                     </div>
-                    {session.user.plan === "FREE" ? (
+                    {!hasPaidPlan ? (
                       <div className="grid gap-3">
                         <SubscribeButton plan="ESSENTIAL" method="card" />
                         <SubscribeButton plan="ESSENTIAL" method="pix" />
@@ -78,11 +124,37 @@ export default async function AccountPage() {
                     ) : (
                       <div className="inline-flex items-center gap-2 rounded-lg bg-mint px-4 py-3 text-sm font-black text-ink">
                         <Crown size={17} aria-hidden="true" />
-                        WhatsApp liberado
+                        Contatos liberados
                       </div>
                     )}
                   </div>
                 </article>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="rounded-xl border border-ink/10 bg-mint p-4 text-ink">
+                    <MessageCircle size={20} aria-hidden="true" />
+                    <p className="mt-3 text-sm font-black">WhatsApp</p>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-ink/64">
+                      {hasPaidPlan
+                        ? "Você pode abrir contatos dos anúncios."
+                        : "Ative um plano para conversar pelo WhatsApp."}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-ink/10 bg-white p-4">
+                    <ShieldCheck size={20} className="text-sky" aria-hidden="true" />
+                    <p className="mt-3 text-sm font-black text-ink">Confiança</p>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-ink/58">
+                      Perfil completo ajuda outros usuários a responderem mais rápido.
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-ink/10 bg-white p-4">
+                    <Crown size={20} className="text-sky" aria-hidden="true" />
+                    <p className="mt-3 text-sm font-black text-ink">Plano atual</p>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-ink/58">
+                      {activePlan.name} mantém seus recursos de contato organizados.
+                    </p>
+                  </div>
+                </div>
 
                 <div className="grid gap-5 md:grid-cols-3">
                   {plans.map((plan) => (
@@ -114,10 +186,10 @@ export default async function AccountPage() {
                 <LockKeyhole size={25} aria-hidden="true" />
               </div>
               <h2 className="mt-5 text-2xl font-black text-ink">
-                Entre para gerenciar assinatura
+                Entre para gerenciar sua conta
               </h2>
               <p className="mt-3 max-w-xl text-base leading-7 text-ink/62">
-                O plano Essencial libera links de WhatsApp por R$ 6,99/mês.
+                Ative o plano Essencial para desbloquear contatos por R$ 5,99/mês.
               </p>
               <div className="mt-6 flex gap-3">
                 <ButtonLink href="/login" variant="secondary">

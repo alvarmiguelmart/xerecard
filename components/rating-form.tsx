@@ -42,19 +42,19 @@ export function RatingForm({
 
       if (response.status === 401) {
         setNeedsLogin(true);
-        throw new Error(data.message ?? "Entre para dar uma nota.");
+        throw new Error(data.message ?? "Entre para avaliar este anúncio.");
       }
 
       if (!response.ok) {
-        throw new Error(data.message ?? "Não foi possível enviar sua nota.");
+        throw new Error(data.message ?? "Não conseguimos enviar sua avaliação.");
       }
 
       setRating(typeof data.rating === "number" ? data.rating : rating);
       setCount(typeof data.ratingCount === "number" ? data.ratingCount : count);
-      setMessage("Nota registrada.");
+      setMessage("Avaliação registrada.");
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Não foi possível enviar sua nota."
+        error instanceof Error ? error.message : "Não conseguimos enviar sua avaliação."
       );
     } finally {
       setIsLoading(false);
@@ -63,14 +63,14 @@ export function RatingForm({
 
   return (
     <div className="rounded-xl border border-ink/10 bg-cloud p-4">
-      <p className="text-sm font-black uppercase text-ink/50">Avaliar serviço</p>
+      <p className="text-sm font-black uppercase text-ink/50">Avaliar anúncio</p>
       <div className="mt-3 flex items-center gap-2">
         {[1, 2, 3, 4, 5].map((score) => (
           <button
             key={score}
             type="button"
             className="focus-ring rounded-md p-1 text-gold disabled:opacity-50"
-            aria-label={`Dar nota ${score}`}
+            aria-label={`Avaliar com ${score} estrela${score > 1 ? "s" : ""}`}
             onClick={() => submit(score)}
             disabled={isLoading}
           >
@@ -90,11 +90,11 @@ export function RatingForm({
       <p className="mt-2 text-sm font-bold text-ink/60">
         {count > 0
           ? `${rating.toFixed(1)} de 5 em ${count.toLocaleString("pt-BR")} avaliações`
-          : "Seja a primeira pessoa a avaliar."}
+          : "Seja a primeira pessoa a avaliar este anúncio."}
       </p>
       {needsLogin ? (
         <ButtonLink href="/login" variant="secondary" size="sm" className="mt-3">
-          Entrar para avaliar
+          Entrar e avaliar
         </ButtonLink>
       ) : null}
       <p className="mt-2 min-h-5 text-sm font-semibold text-sky" role="status">

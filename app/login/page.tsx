@@ -16,16 +16,16 @@ export default function LoginPage() {
           <div>
             <p className="text-sm font-black uppercase text-sky">Login</p>
             <h1 className="mt-3 text-5xl font-black leading-tight text-ink">
-              Entre para gerenciar serviços e contatos.
+              Entre para acompanhar anúncios e contatos.
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-8 text-ink/64">
-              O acesso mantém suas publicações, assinatura, notificações e ações
-              de WhatsApp em um fluxo único.
+              Veja seus anúncios, receba avisos de interesse e desbloqueie
+              conversas no WhatsApp quando tiver um plano ativo.
             </p>
             <p className="mt-6 text-sm font-semibold text-ink/58">
               Ainda não tem conta?{" "}
               <Link className="font-black text-sky hover:underline" href="/cadastrar">
-                Criar cadastro
+                Criar uma conta
               </Link>
             </p>
           </div>

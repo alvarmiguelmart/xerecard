@@ -16,16 +16,16 @@ export default function RegisterPage() {
           <div>
             <p className="text-sm font-black uppercase text-sky">Cadastro</p>
             <h1 className="mt-3 text-5xl font-black leading-tight text-ink">
-              Crie sua conta para publicar e receber contatos.
+              Crie sua conta para pedir ou oferecer serviços.
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-8 text-ink/64">
-              Clientes publicam pedidos. Profissionais oferecem serviços. A
-              assinatura libera o botão de WhatsApp e organiza notificações.
+              Publique o que você precisa, anuncie seu trabalho e centralize os
+              contatos interessados em um só lugar.
             </p>
             <p className="mt-6 text-sm font-semibold text-ink/58">
               Já tem conta?{" "}
               <Link className="font-black text-sky hover:underline" href="/login">
-                Entrar agora
+                Entrar
               </Link>
             </p>
           </div>

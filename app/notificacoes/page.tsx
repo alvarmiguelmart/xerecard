@@ -18,15 +18,16 @@ export default async function NotificationsPage() {
             <div>
               <p className="text-sm font-black uppercase text-sky">Notificações</p>
               <h1 className="mt-2 text-5xl font-black text-ink">
-                Interesses e avisos.
+                Interesses, contatos e avisos.
               </h1>
               <p className="mt-3 max-w-2xl text-base leading-7 text-ink/62">
-                Acompanhe quem demonstrou interesse e os avisos do sistema.
+                Veja quando alguém curtir, tentar contato ou interagir com seus
+                anúncios.
               </p>
             </div>
             {!session ? (
               <ButtonLink href="/login" variant="secondary">
-                Entrar para sincronizar
+                Entrar para ver avisos
               </ButtonLink>
             ) : null}
           </div>
@@ -35,21 +36,21 @@ export default async function NotificationsPage() {
             {!session ? (
               <article className="rounded-xl border border-ink/10 bg-white p-6 premium-shadow">
                 <h2 className="text-2xl font-black text-ink">
-                  Entre para ver suas notificações
+                  Entre para ver seus avisos
                 </h2>
                 <p className="mt-3 text-base leading-7 text-ink/62">
-                  Notificações são privadas e aparecem quando alguém interage
-                  com suas publicações.
+                  Seus avisos são privados e aparecem quando alguém interage
+                  com seus anúncios.
                 </p>
               </article>
             ) : notifications.length === 0 ? (
               <article className="rounded-xl border border-ink/10 bg-white p-6 premium-shadow">
                 <h2 className="text-2xl font-black text-ink">
-                  Nenhuma notificação ainda
+                  Nenhum aviso por enquanto
                 </h2>
                 <p className="mt-3 text-base leading-7 text-ink/62">
-                  Quando alguém curtir, abrir contato ou interagir com sua
-                  publicação, você verá o aviso aqui.
+                  Quando alguém curtir, tentar contato ou responder a um anúncio,
+                  o aviso aparece aqui.
                 </p>
               </article>
             ) : (

@@ -30,19 +30,19 @@ export function LikeButton({
 
       if (response.status === 401) {
         setNeedsLogin(true);
-        throw new Error(data.message ?? "Entre para curtir.");
+        throw new Error(data.message ?? "Entre para salvar essa curtida.");
       }
 
       if (!response.ok) {
-        throw new Error(data.message ?? "Não foi possível curtir.");
+        throw new Error(data.message ?? "Não conseguimos registrar sua curtida.");
       }
 
       if (typeof data.likeCount === "number") {
         setCount(data.likeCount);
       }
-      setMessage("Curtida enviada.");
+      setMessage("Curtida registrada.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Não foi possível curtir.");
+      setMessage(error instanceof Error ? error.message : "Não conseguimos registrar sua curtida.");
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +57,7 @@ export function LikeButton({
         onClick={like}
         disabled={isLoading}
       >
-        {isLoading ? "Enviando" : `Curtir publicação (${count.toLocaleString("pt-BR")})`}
+        {isLoading ? "Enviando" : `Curtir anúncio (${count.toLocaleString("pt-BR")})`}
       </Button>
       {needsLogin ? (
         <ButtonLink href="/login" variant="secondary">

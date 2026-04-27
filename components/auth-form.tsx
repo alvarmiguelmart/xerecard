@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Mail, ShieldCheck, UserRound } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
@@ -37,7 +37,7 @@ export function AuthForm({
         const data = await readJsonResponse<{ message?: string }>(response);
 
         if (!response.ok) {
-          throw new Error(data.message ?? "Não foi possível criar sua conta.");
+          throw new Error(data.message ?? "Não conseguimos criar sua conta.");
         }
       }
 
@@ -54,14 +54,24 @@ export function AuthForm({
       router.push("/servicos");
       router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Não foi possível autenticar.");
+      setMessage(error instanceof Error ? error.message : "Não conseguimos entrar agora.");
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <div className="grid gap-4 rounded-xl border border-ink/10 bg-white p-5 premium-shadow">
+    <div className="grid gap-4 rounded-xl border border-ink/10 bg-white p-5 premium-shadow md:p-6">
+      <div className="rounded-xl bg-cloud p-4">
+        <div className="grid size-10 place-items-center rounded-lg bg-mint text-ink">
+          <ShieldCheck size={20} aria-hidden="true" />
+        </div>
+        <p className="mt-3 text-sm font-bold leading-6 text-ink/62">
+          Seu acesso guarda anúncios, notificações e contatos desbloqueados com
+          segurança.
+        </p>
+      </div>
+
       {googleEnabled ? (
         <>
           <button
@@ -74,7 +84,7 @@ export function AuthForm({
 
           <div className="flex items-center gap-3 text-xs font-black uppercase text-ink/40">
             <span className="h-px flex-1 bg-ink/10" />
-            Email e senha
+            Entrar com email
             <span className="h-px flex-1 bg-ink/10" />
           </div>
         </>
@@ -89,8 +99,8 @@ export function AuthForm({
               name="name"
               type="text"
               autoComplete="name"
-              className="focus-ring h-12 rounded-lg border border-ink/12 bg-cloud px-4 text-base"
-              placeholder="Seu nome"
+              className="field-control text-base"
+              placeholder="Nome para exibir no perfil"
               required
               minLength={2}
             />
@@ -99,15 +109,22 @@ export function AuthForm({
 
         <label className="grid gap-2 text-sm font-bold text-ink" htmlFor="email">
           Email
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            className="focus-ring h-12 rounded-lg border border-ink/12 bg-cloud px-4 text-base"
-            placeholder="voce@email.com"
-            required
-          />
+          <span className="relative">
+            <Mail
+              size={17}
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink/38"
+              aria-hidden="true"
+            />
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              className="field-control field-control-icon w-full text-base"
+              placeholder="voce@email.com"
+              required
+            />
+          </span>
         </label>
 
         <label className="grid gap-2 text-sm font-bold text-ink" htmlFor="password">
@@ -117,15 +134,15 @@ export function AuthForm({
             name="password"
             type="password"
             autoComplete={mode === "login" ? "current-password" : "new-password"}
-            className="focus-ring h-12 rounded-lg border border-ink/12 bg-cloud px-4 text-base"
-            placeholder="Mínimo 6 caracteres"
+            className="field-control text-base"
+            placeholder="Use pelo menos 6 caracteres"
             required
             minLength={6}
           />
         </label>
 
         <fieldset className="grid gap-3">
-          <legend className="text-sm font-bold text-ink">Perfil</legend>
+          <legend className="text-sm font-bold text-ink">Como você quer usar?</legend>
           <div className="grid grid-cols-2 gap-3">
             {(["cliente", "profissional"] satisfies UserRole[]).map((role) => (
               <label key={role} className="group cursor-pointer">
@@ -136,7 +153,8 @@ export function AuthForm({
                   className="peer sr-only"
                   defaultChecked={role === "cliente"}
                 />
-                <span className="focus-ring flex items-center justify-center rounded-lg border border-ink/12 bg-white px-3 py-3 text-sm font-black capitalize text-ink transition peer-checked:border-sky peer-checked:bg-mint peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-acid group-hover:bg-cloud">
+                <span className="focus-ring flex items-center justify-center gap-2 rounded-lg border border-ink/12 bg-white px-3 py-3 text-sm font-black capitalize text-ink transition peer-checked:border-sky peer-checked:bg-mint peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-acid group-hover:bg-cloud">
+                  <UserRound size={16} aria-hidden="true" />
                   {role}
                 </span>
               </label>
@@ -150,7 +168,7 @@ export function AuthForm({
           icon={<ArrowRight size={18} aria-hidden="true" />}
           disabled={isLoading}
         >
-          {isLoading ? "Enviando" : mode === "login" ? "Entrar" : "Criar conta"}
+          {isLoading ? "Aguarde..." : mode === "login" ? "Entrar" : "Criar conta"}
         </Button>
 
         <p className="min-h-6 text-sm font-semibold text-coral" role="status">

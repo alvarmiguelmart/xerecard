@@ -25,21 +25,21 @@ export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
 
       if (response.status === 401) {
         setNeedsLogin(true);
-        throw new Error(data.message ?? "Entre para continuar.");
+        throw new Error(data.message ?? "Entre para abrir o contato.");
       }
 
       if (response.status === 402) {
         setNeedsSubscription(true);
-        throw new Error(data.message ?? "Assine para abrir o WhatsApp.");
+        throw new Error(data.message ?? "Ative um plano para abrir o WhatsApp.");
       }
 
       if (!response.ok || !data.url) {
-        throw new Error(data.message ?? "Não foi possível abrir o contato.");
+        throw new Error(data.message ?? "Não conseguimos abrir esse contato agora.");
       }
 
       window.location.href = data.url;
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Não foi possível abrir o contato.");
+      setMessage(error instanceof Error ? error.message : "Não conseguimos abrir esse contato agora.");
     } finally {
       setIsLoading(false);
     }
@@ -55,11 +55,11 @@ export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
         onClick={handleClick}
         disabled={isLoading}
       >
-        {isLoading ? "Verificando assinatura" : "Chamar no WhatsApp"}
+        {isLoading ? "Verificando acesso" : "Abrir WhatsApp"}
       </Button>
       {needsSubscription ? (
         <ButtonLink href="/minha-conta#assinatura" variant="secondary">
-          Assinar por R$ 6,99
+          Ativar plano Essencial
         </ButtonLink>
       ) : null}
       {needsLogin ? (

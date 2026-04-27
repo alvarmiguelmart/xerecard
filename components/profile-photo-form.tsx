@@ -31,18 +31,18 @@ export function ProfilePhotoForm({
       const data = await readJsonResponse<{ message?: string; image?: string }>(response);
 
       if (!response.ok) {
-        throw new Error(data.message ?? "Não foi possível atualizar perfil.");
+        throw new Error(data.message ?? "Não conseguimos atualizar seu perfil.");
       }
 
       if (data.image) {
         setPreview(data.image);
       }
 
-      setMessage("Perfil atualizado.");
+      setMessage("Perfil salvo.");
       router.refresh();
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Não foi possível atualizar perfil."
+        error instanceof Error ? error.message : "Não conseguimos atualizar seu perfil."
       );
     } finally {
       setIsLoading(false);
@@ -51,6 +51,12 @@ export function ProfilePhotoForm({
 
   return (
     <form className="grid gap-4" onSubmit={submit}>
+      <div>
+        <p className="text-sm font-black uppercase text-ink/48">Editar perfil</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-ink/58">
+          Atualize como seu nome e foto aparecem nos anúncios.
+        </p>
+      </div>
       <div className="flex items-center gap-4">
         <div className="relative size-20 overflow-hidden rounded-2xl bg-cloud">
           {preview ? (
@@ -63,7 +69,7 @@ export function ProfilePhotoForm({
         </div>
         <div>
           <label className="focus-within:ring-acid block cursor-pointer rounded-lg border border-ink/12 bg-white px-4 py-3 text-sm font-black text-ink hover:bg-cloud focus-within:ring-2">
-            Trocar foto
+            Alterar foto
             <input
               type="file"
               name="image"
@@ -78,7 +84,7 @@ export function ProfilePhotoForm({
             />
           </label>
           <p className="mt-2 text-xs font-semibold text-ink/50">
-            PNG ou JPG até 4MB.
+            Use PNG ou JPG até 4MB.
           </p>
         </div>
       </div>
@@ -89,7 +95,7 @@ export function ProfilePhotoForm({
           id="profile-name"
           name="name"
           defaultValue={name}
-          className="focus-ring h-12 rounded-lg border border-ink/12 bg-cloud px-4"
+          className="field-control"
           minLength={2}
         />
       </label>

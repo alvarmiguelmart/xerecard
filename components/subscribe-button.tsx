@@ -29,7 +29,7 @@ export function SubscribeButton({
       const data = await readJsonResponse<{ message?: string; url?: string }>(response);
 
       if (!response.ok) {
-        throw new Error(data.message ?? "Não foi possível ativar assinatura.");
+        throw new Error(data.message ?? "Não conseguimos iniciar sua assinatura.");
       }
 
       if (data.url) {
@@ -37,10 +37,10 @@ export function SubscribeButton({
         return;
       }
 
-      setMessage("Checkout iniciado.");
+      setMessage("Checkout aberto. Finalize para liberar contatos.");
     } catch (error) {
       setMessage(
-        error instanceof Error ? error.message : "Não foi possível ativar assinatura."
+        error instanceof Error ? error.message : "Não conseguimos iniciar sua assinatura."
       );
     } finally {
       setIsLoading(false);
@@ -55,7 +55,7 @@ export function SubscribeButton({
         onClick={activate}
         disabled={isLoading}
       >
-        {isLoading ? "Abrindo checkout" : method === "pix" ? "Pagar com Pix" : "Pagar com cartão"}
+        {isLoading ? "Abrindo pagamento" : method === "pix" ? "Pagar com Pix" : "Pagar com cartão"}
       </Button>
       <p className="min-h-5 text-sm font-semibold text-sky" role="status">
         {message}
