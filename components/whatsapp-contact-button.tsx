@@ -1,8 +1,9 @@
 "use client";
 
-import { MessageCircle } from "lucide-react";
+import { CheckCircle2, TimerReset } from "lucide-react";
 import { useState } from "react";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/whatsapp-icon";
 import { readJsonResponse } from "@/lib/http";
 
 export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
@@ -46,21 +47,38 @@ export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid h-full content-start gap-3">
       <Button
         type="button"
         variant="whatsapp"
         size="lg"
-        icon={<MessageCircle size={19} aria-hidden="true" />}
+        className="min-h-14 w-full"
+        icon={<WhatsAppIcon className="size-5" />}
         onClick={handleClick}
         disabled={isLoading}
       >
         {isLoading ? "Verificando acesso" : "Abrir WhatsApp"}
       </Button>
       {needsSubscription ? (
-        <ButtonLink href="/minha-conta#assinatura" variant="secondary">
-          Ativar plano Essencial
-        </ButtonLink>
+        <div className="rounded-xl border border-sky/35 bg-panel p-4 text-white premium-shadow">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-lg font-black text-white">Plano Essencial</p>
+            <span className="badge-success inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-black">
+              <TimerReset size={12} aria-hidden="true" />
+              1 mês grátis
+            </span>
+          </div>
+          <p className="mt-2 text-sm font-semibold leading-6 text-white/62">
+            {message || "Comece o teste grátis e abra conversas direto pelo WhatsApp."}
+          </p>
+          <p className="mt-3 flex gap-2 text-sm font-semibold text-white/72">
+            <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-white" aria-hidden="true" />
+            Abra contatos dos anúncios quando precisar.
+          </p>
+          <ButtonLink href="/minha-conta?tab=assinatura" className="mt-4 w-full justify-center">
+            Ativar plano Essencial
+          </ButtonLink>
+        </div>
       ) : null}
       {needsLogin ? (
         <ButtonLink href="/login" variant="secondary">
@@ -68,8 +86,9 @@ export function WhatsAppContactButton({ serviceId }: { serviceId: string }) {
         </ButtonLink>
       ) : null}
       <p className="min-h-6 text-sm font-semibold text-coral" role="status">
-        {message}
+        {needsSubscription ? "" : message}
       </p>
     </div>
   );
 }
+

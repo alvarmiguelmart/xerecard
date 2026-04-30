@@ -62,32 +62,33 @@ export function RatingForm({
   }
 
   return (
-    <div className="rounded-xl border border-ink/10 bg-cloud p-4">
-      <p className="text-sm font-black uppercase text-ink/50">Avaliar anúncio</p>
-      <div className="mt-3 flex items-center gap-2">
+    <div className="grid h-full content-start gap-3">
+      <div className="flex min-h-14 items-center justify-between gap-3 rounded-lg border border-ink/12 bg-panel px-4">
+        <p className="text-sm font-black text-ink">Avaliar anúncio</p>
+        <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((score) => (
           <button
             key={score}
             type="button"
-            className="focus-ring rounded-md p-1 text-gold disabled:opacity-50"
+            className="focus-ring rounded-md p-0.5 disabled:opacity-50"
             aria-label={`Avaliar com ${score} estrela${score > 1 ? "s" : ""}`}
             onClick={() => submit(score)}
             disabled={isLoading}
           >
             <Star
-              size={24}
+              size={19}
               className={cn(
                 "transition",
-                score <= (selected || Math.round(rating))
-                  ? "fill-gold text-gold"
-                  : "text-ink/25"
+                "icon-star",
+                score <= (selected || Math.round(rating)) ? "opacity-100" : "opacity-35"
               )}
               aria-hidden="true"
             />
           </button>
         ))}
+        </div>
       </div>
-      <p className="mt-2 text-sm font-bold text-ink/60">
+      <p className="text-sm font-bold text-ink/60">
         {count > 0
           ? `${rating.toFixed(1)} de 5 em ${count.toLocaleString("pt-BR")} avaliações`
           : "Seja a primeira pessoa a avaliar este anúncio."}
@@ -97,9 +98,10 @@ export function RatingForm({
           Entrar e avaliar
         </ButtonLink>
       ) : null}
-      <p className="mt-2 min-h-5 text-sm font-semibold text-sky" role="status">
+      <p className="mt-2 min-h-5 text-sm font-semibold text-ink" role="status">
         {message}
       </p>
     </div>
   );
 }
+

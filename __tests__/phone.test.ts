@@ -7,8 +7,8 @@ describe("normalizeBrazilianWhatsApp", () => {
     expect(normalizeBrazilianWhatsApp("+55 (42) 99999-0001")).toBe("5542999990001");
   });
 
-  it("normalizes valid landline-length WhatsApp numbers", () => {
-    expect(normalizeBrazilianWhatsApp("11 1234-5678")).toBe("551112345678");
+  it("rejects landline-length numbers", () => {
+    expect(normalizeBrazilianWhatsApp("11 1234-5678")).toBeNull();
   });
 
   it("returns null for invalid numbers", () => {

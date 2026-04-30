@@ -26,10 +26,11 @@ npm run build
 npm run lint
 npm run typecheck
 npm run prisma:generate
+npm run prisma:migrate
 npm run db:push
 ```
 
-Use `npm run build`, `npm run lint`, and `npm run typecheck` before considering a production-facing change complete. Use `npm run db:push` only when Prisma schema changes need to be applied to the configured database.
+Use `npm run build`, `npm run lint`, and `npm run typecheck` before considering a production-facing change complete. Use Prisma migrations for production schema changes. Keep `npm run db:push` for local prototyping only.
 
 ## Environment
 
@@ -39,6 +40,8 @@ Copy `.env.example` to `.env` for local work. Required production-grade variable
 - `AUTH_SECRET`, `AUTH_URL`, and `NEXT_PUBLIC_APP_URL`.
 - `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` for Google OAuth, optional locally.
 - `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_ESSENTIAL_PRICE_ID`, and `STRIPE_PROFESSIONAL_PRICE_ID`.
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` for production uploads.
+- `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` when shared auth rate limiting is needed.
 
 Do not commit real secrets. The app can fall back to seed marketplace data in development when `DATABASE_URL` is missing or unusable; database-backed actions still require a working Prisma connection.
 
@@ -122,3 +125,4 @@ Before handing off meaningful code changes:
 - Stripe production webhook URL should be `/api/stripe/webhook` on the final domain.
 - Google OAuth callback should be `/api/auth/callback/google` on both local and production domains.
 - Run `npm run build`, `npm run lint`, and `npm run typecheck` before deployment.
+- Run Prisma migrations against production instead of `db:push`.

@@ -8,10 +8,12 @@ import type { Plan } from "@prisma/client";
 
 export function SubscribeButton({
   plan = "ESSENTIAL",
-  method
+  method,
+  trialDays
 }: {
   plan?: Exclude<Plan, "FREE">;
-  method: "card" | "pix";
+  method?: "card";
+  trialDays?: number;
 }) {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -55,11 +57,16 @@ export function SubscribeButton({
         onClick={activate}
         disabled={isLoading}
       >
-        {isLoading ? "Abrindo pagamento" : method === "pix" ? "Pagar com Pix" : "Pagar com cartão"}
+        {isLoading
+          ? "Abrindo pagamento"
+          : trialDays
+              ? `Começar ${trialDays} dias grátis`
+              : "Pagar com cartão"}
       </Button>
-      <p className="min-h-5 text-sm font-semibold text-sky" role="status">
+      <p className="min-h-5 text-sm font-semibold text-ink" role="status">
         {message}
       </p>
     </div>
   );
 }
+

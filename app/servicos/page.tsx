@@ -9,22 +9,33 @@ type ServicesPageProps = {
   searchParams?: Promise<{
     busca?: string;
     categoria?: string;
+    tipo?: string;
+    cidade?: string;
+    verificados?: string;
   }>;
 };
 
 export default async function ServicesPage({ searchParams }: ServicesPageProps) {
   const params = await searchParams;
   const requestedCategory = params?.categoria;
+  const requestedMode = params?.tipo;
   const initialQuery = params?.busca?.trim().slice(0, 120) ?? "";
   const initialCategory =
     requestedCategory && categories.includes(requestedCategory as (typeof categories)[number])
       ? requestedCategory
       : "all";
+  const initialMode = requestedMode === "REQUEST" || requestedMode === "OFFER" ? requestedMode : "all";
   let services: MarketplaceService[] = [];
   let servicesUnavailable = false;
 
   try {
-    services = await listServices();
+    services = await listServices({
+      query: initialQuery,
+      category: initialCategory,
+      mode: initialMode,
+      location: params?.cidade?.trim().slice(0, 80),
+      verifiedOnly: params?.verificados === "true"
+    });
   } catch (error) {
     if (!(error instanceof DatabaseError)) {
       throw error;
@@ -36,7 +47,7 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
   return (
     <>
       <SiteHeader />
-      <main className="bg-paper py-10">
+      <main className="page-depth py-10">
         <section className="container-page">
           {servicesUnavailable ? (
             <div className="rounded-xl border border-ink/10 bg-white p-8 premium-shadow">
@@ -52,6 +63,7 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
               services={services}
               initialCategory={initialCategory}
               initialQuery={initialQuery}
+              initialMode={initialMode}
             />
           )}
         </section>
@@ -60,3 +72,4 @@ export default async function ServicesPage({ searchParams }: ServicesPageProps) 
     </>
   );
 }
+

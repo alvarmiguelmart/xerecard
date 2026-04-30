@@ -1,6 +1,7 @@
 import type { Plan, UserRole } from "@prisma/client";
 import type { Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
+import { hasActiveContactAccess } from "@/lib/billing";
 import { prisma } from "@/lib/prisma";
 
 type CallbackUser = {
@@ -22,13 +23,22 @@ export async function jwtCallback({
 
   const dbUser = await prisma.user.findUnique({
     where: { email },
-    select: { id: true, role: true, plan: true, image: true, name: true }
+    select: {
+      id: true,
+      role: true,
+      plan: true,
+      planExpiresAt: true,
+      stripeSubscriptionId: true,
+      stripeSubscriptionStatus: true,
+      image: true,
+      name: true
+    }
   });
 
   if (dbUser) {
     token.id = dbUser.id;
     token.role = dbUser.role;
-    token.plan = dbUser.plan;
+    token.plan = hasActiveContactAccess(dbUser) ? dbUser.plan : "FREE";
     token.picture = dbUser.image ?? token.picture;
     token.name = dbUser.name ?? token.name;
   }

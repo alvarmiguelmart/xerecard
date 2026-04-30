@@ -9,13 +9,12 @@ export const createServiceSchema = z.object({
   category: z.enum(categoryValues),
   categories: z.array(z.enum(categoryValues)).min(1).optional(),
   location: z.string().trim().min(2).max(100),
-  whatsapp: z.string().regex(/^55[1-9][1-9]9?\d{8}$/),
+  whatsapp: z.string().regex(/^55[1-9][1-9]9\d{8}$/),
   priceLabel: z.string().trim().min(1).max(80),
   description: z.string().trim().min(10).max(500)
 });
 
 export const createRatingSchema = z.object({
   serviceId: z.string().min(1),
-  rating: z.number().int().min(1).max(5),
-  comment: z.string().max(500).optional()
+  rating: z.number().int().min(1).max(5)
 });

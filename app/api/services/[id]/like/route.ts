@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createNotification, findRawService } from "@/lib/marketplace-db";
@@ -23,21 +24,23 @@ export async function POST(_request: Request, context: LikeRouteContext) {
     return NextResponse.json({ message: "Serviço não encontrado." }, { status: 404 });
   }
 
-  const like = await prisma.like.upsert({
-    where: {
-      userId_serviceId: {
+  let created = false;
+
+  try {
+    await prisma.like.create({
+      data: {
         userId: session.user.id,
         serviceId: service.id
       }
-    },
-    update: {},
-    create: {
-      userId: session.user.id,
-      serviceId: service.id
+    });
+    created = true;
+  } catch (error) {
+    if (!(error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002")) {
+      throw error;
     }
-  });
+  }
 
-  if (service.ownerId !== session.user.id) {
+  if (created && service.ownerId !== session.user.id) {
     await createNotification({
       recipientId: service.ownerId,
       actorId: session.user.id,
@@ -50,5 +53,6 @@ export async function POST(_request: Request, context: LikeRouteContext) {
 
   const likeCount = await prisma.like.count({ where: { serviceId: service.id } });
 
-  return NextResponse.json({ ok: true, like, likeCount });
+  return NextResponse.json({ ok: true, liked: true, likeCount });
 }
+

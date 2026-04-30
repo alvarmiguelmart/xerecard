@@ -5,12 +5,14 @@ export function UserAvatar({
   name,
   image,
   size = "md",
-  className
+  className,
+  frameless = false
 }: {
   name: string;
   image?: string | null;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
+  frameless?: boolean;
 }) {
   const sizes = {
     sm: "size-9 rounded-lg text-sm",
@@ -22,7 +24,8 @@ export function UserAvatar({
   return (
     <div
       className={cn(
-        "relative grid shrink-0 place-items-center overflow-hidden bg-mint font-black uppercase text-ink",
+        "relative grid shrink-0 place-items-center overflow-hidden font-black uppercase",
+        frameless ? "bg-cloud text-ink" : "surface-panel",
         sizes[size],
         className
       )}
@@ -41,3 +44,4 @@ export function UserAvatar({
     </div>
   );
 }
+

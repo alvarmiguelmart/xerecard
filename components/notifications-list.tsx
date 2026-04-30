@@ -1,7 +1,7 @@
 "use client";
 
 import { Bell, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { readJsonResponse } from "@/lib/http";
 import type { AppNotification } from "@/lib/marketplace-data";
@@ -17,6 +17,22 @@ export function NotificationsList({
   const [nextCursor, setNextCursor] = useState(initialNextCursor);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!initialNotifications.some((notification) => notification.unread)) {
+      return;
+    }
+
+    fetch("/api/notifications", { method: "PATCH" })
+      .then((response) => {
+        if (response.ok) {
+          setNotifications((current) =>
+            current.map((notification) => ({ ...notification, unread: false }))
+          );
+        }
+      })
+      .catch(() => undefined);
+  }, [initialNotifications]);
 
   async function loadMore() {
     if (!nextCursor) {
@@ -53,10 +69,10 @@ export function NotificationsList({
 
   if (notifications.length === 0) {
     return (
-      <article className="rounded-xl border border-ink/10 bg-white p-6 premium-shadow">
+      <article className="glass-panel-strong motion-rise rounded-xl p-6">
         <h2 className="text-2xl font-black text-ink">Nenhum aviso por enquanto</h2>
         <p className="mt-3 text-base leading-7 text-ink/62">
-          Quando alguém curtir, tentar contato ou responder a um anúncio, o aviso aparece aqui.
+          Quando alguém tentar contato ou responder a um anúncio, o aviso aparece aqui.
         </p>
       </article>
     );
@@ -67,9 +83,9 @@ export function NotificationsList({
       {notifications.map((notification) => (
         <article
           key={notification.id}
-          className="flex gap-4 rounded-xl border border-ink/10 bg-white p-5 premium-shadow"
+          className="glass-panel spatial-card flex gap-4 rounded-xl p-5"
         >
-          <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-mint text-ink">
+          <div className="surface-panel grid size-12 shrink-0 place-items-center rounded-lg">
             {notification.unread ? (
               <Bell size={20} aria-hidden="true" />
             ) : (
@@ -103,3 +119,4 @@ export function NotificationsList({
     </>
   );
 }
+

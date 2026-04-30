@@ -21,6 +21,9 @@ describe("auth callbacks", () => {
       id: "user-1",
       role: "PROFESSIONAL",
       plan: "ESSENTIAL",
+      planExpiresAt: null,
+      stripeSubscriptionId: "sub_123",
+      stripeSubscriptionStatus: "active",
       image: "/avatar.png",
       name: "Ana"
     });
@@ -38,6 +41,27 @@ describe("auth callbacks", () => {
       picture: "/avatar.png",
       name: "Ana"
     });
+  });
+
+  it("downgrades expired paid access in the JWT", async () => {
+    findUnique.mockResolvedValue({
+      id: "user-1",
+      role: "PROFESSIONAL",
+      plan: "ESSENTIAL",
+      planExpiresAt: new Date("2026-01-01"),
+      stripeSubscriptionId: null,
+      stripeSubscriptionStatus: null,
+      image: null,
+      name: "Ana"
+    });
+    const { jwtCallback } = await import("@/lib/auth-callbacks");
+
+    const token = await jwtCallback({
+      token: { email: "ana@example.com" },
+      user: undefined
+    });
+
+    expect(token.plan).toBe("FREE");
   });
 
   it("hydrates session fields with safe defaults", async () => {

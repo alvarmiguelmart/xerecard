@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 
@@ -114,9 +114,64 @@ export async function saveUpload(file: File, folder: "profiles" | "services") {
     return `${storageConfig.url}/storage/v1/object/public/${storageBucket}/${objectPath}`;
   }
 
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("Configure Supabase Storage para salvar imagens em produção.");
+  }
+
   const directory = path.join(uploadRoot, folder);
   await mkdir(directory, { recursive: true });
   await writeFile(path.join(directory, fileName), buffer);
 
   return `/uploads/${folder}/${fileName}`;
+}
+
+function getSupabaseObjectPath(fileUrl: string, storageUrl: string) {
+  const publicPrefix = `${storageUrl}/storage/v1/object/public/${storageBucket}/`;
+
+  if (!fileUrl.startsWith(publicPrefix)) {
+    return null;
+  }
+
+  return fileUrl.slice(publicPrefix.length);
+}
+
+function getLocalUploadPath(fileUrl: string) {
+  if (!fileUrl.startsWith("/uploads/")) {
+    return null;
+  }
+
+  return path.join(uploadRoot, fileUrl.replace(/^\/uploads\//, ""));
+}
+
+export async function deleteUpload(fileUrl?: string | null) {
+  if (!fileUrl) {
+    return;
+  }
+
+  const storageConfig = getStorageConfig();
+
+  if (storageConfig) {
+    const objectPath = getSupabaseObjectPath(fileUrl, storageConfig.url);
+
+    if (!objectPath) {
+      return;
+    }
+
+    await fetch(`${storageConfig.url}/storage/v1/object/${storageBucket}/${objectPath}`, {
+      method: "DELETE",
+      headers: {
+        apikey: storageConfig.key,
+        Authorization: `Bearer ${storageConfig.key}`
+      }
+    });
+    return;
+  }
+
+  const localPath = getLocalUploadPath(fileUrl);
+
+  if (!localPath) {
+    return;
+  }
+
+  await unlink(localPath).catch(() => undefined);
 }

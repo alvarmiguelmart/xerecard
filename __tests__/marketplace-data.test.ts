@@ -20,10 +20,12 @@ describe("mapService", () => {
       owner: {
         id: "user-1",
         name: "Ana",
-        image: "/avatar.png"
+        image: "/avatar.png",
+        verifiedAt: new Date("2026-01-01")
       },
       _count: {
-        likes: 3
+        likes: 3,
+        ratings: 2
       }
     });
 
@@ -32,9 +34,11 @@ describe("mapService", () => {
       mode: "REQUEST",
       ownerName: "Ana",
       ownerImage: "/avatar.png",
-      likeCount: 3,
       image: "/generated/service-request.png",
-      contentType: "Pedido"
+      contentType: "Pedido",
+      verified: true,
+      likeCount: 3,
+      ratingCount: 2
     });
   });
 });

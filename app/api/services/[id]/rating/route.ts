@@ -45,6 +45,14 @@ export async function POST(request: Request, context: RatingRouteContext) {
   }
 
   const score = parsed.data.rating;
+  const existing = await prisma.rating.findUnique({
+    where: {
+      userId_serviceId: {
+        userId: session.user.id,
+        serviceId: service.id
+      }
+    }
+  });
 
   await prisma.rating.upsert({
     where: {
@@ -61,7 +69,7 @@ export async function POST(request: Request, context: RatingRouteContext) {
     }
   });
 
-  if (service.ownerId !== session.user.id) {
+  if (!existing && service.ownerId !== session.user.id) {
     await createNotification({
       recipientId: service.ownerId,
       actorId: session.user.id,
@@ -84,3 +92,4 @@ export async function POST(request: Request, context: RatingRouteContext) {
     ratingCount: aggregate._count.score
   });
 }
+

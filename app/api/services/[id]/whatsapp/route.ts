@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { hasActiveContactAccess } from "@/lib/billing";
 import { createNotification, findRawService } from "@/lib/marketplace-db";
 import { toWhatsAppDialNumber } from "@/lib/phone";
+import { prisma } from "@/lib/prisma";
 
 type ContactRouteContext = {
   params: Promise<{
@@ -19,9 +21,19 @@ export async function POST(_request: Request, context: ContactRouteContext) {
     );
   }
 
-  if (session.user.plan === "FREE") {
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      plan: true,
+      planExpiresAt: true,
+      stripeSubscriptionId: true,
+      stripeSubscriptionStatus: true
+    }
+  });
+
+  if (!hasActiveContactAccess(user)) {
     return NextResponse.json(
-      { message: "Assine o plano Essencial para abrir contatos no WhatsApp." },
+      { message: "Ative ou renove o plano Essencial para abrir contatos no WhatsApp." },
       { status: 402 }
     );
   }
@@ -59,3 +71,4 @@ export async function POST(_request: Request, context: ContactRouteContext) {
     url: `https://wa.me/${dialNumber}?text=${text}`
   });
 }
+

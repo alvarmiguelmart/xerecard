@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { DatabaseError, listNotifications } from "@/lib/marketplace-db";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -31,3 +32,19 @@ export async function GET(request: Request) {
     throw error;
   }
 }
+
+export async function PATCH() {
+  const session = await auth();
+
+  if (!session) {
+    return NextResponse.json({ message: "Entre para atualizar notificações." }, { status: 401 });
+  }
+
+  await prisma.notification.updateMany({
+    where: { recipientId: session.user.id, readAt: null },
+    data: { readAt: new Date() }
+  });
+
+  return NextResponse.json({ ok: true });
+}
+

@@ -40,6 +40,7 @@ export function LikeButton({
       if (typeof data.likeCount === "number") {
         setCount(data.likeCount);
       }
+
       setMessage("Curtida registrada.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Não conseguimos registrar sua curtida.");
@@ -49,11 +50,13 @@ export function LikeButton({
   }
 
   return (
-    <div className="grid gap-2">
+    <div className="grid h-full content-start gap-3">
       <Button
         type="button"
         variant="secondary"
-        icon={<Heart size={18} aria-hidden="true" />}
+        size="lg"
+        className="min-h-14 w-full"
+        icon={<Heart size={18} className="icon-like" aria-hidden="true" />}
         onClick={like}
         disabled={isLoading}
       >
@@ -64,7 +67,10 @@ export function LikeButton({
           Entrar para curtir
         </ButtonLink>
       ) : null}
-      <p className="min-h-5 text-sm font-semibold text-sky">{message}</p>
+      <p className="min-h-5 text-sm font-semibold text-ink" role="status">
+        {message}
+      </p>
     </div>
   );
 }
+

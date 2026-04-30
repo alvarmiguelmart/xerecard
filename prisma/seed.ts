@@ -13,14 +13,16 @@ async function main() {
       where: { email },
       update: {
         name: service.ownerName,
-        image: service.ownerImage
+        image: service.ownerImage,
+        verifiedAt: service.verified ? new Date() : null
       },
       create: {
         name: service.ownerName,
         email,
         role: "PROFESSIONAL",
         plan: "PROFESSIONAL",
-        image: service.ownerImage
+        image: service.ownerImage,
+        verifiedAt: service.verified ? new Date() : null
       }
     });
 

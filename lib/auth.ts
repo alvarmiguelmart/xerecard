@@ -2,14 +2,17 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Discord from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 import { z } from "zod";
 import { jwtCallback, sessionCallback } from "@/lib/auth-callbacks";
+import { getEmailVerificationIdentifier } from "@/lib/email-verification";
 import { prisma } from "@/lib/prisma";
+import { checkAuthRateLimit } from "@/lib/rate-limit";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6)
+  password: z.string().min(8).max(128)
 });
 
 const providers = [
@@ -21,13 +24,28 @@ const providers = [
         })
       ]
     : []),
+  ...(process.env.AUTH_DISCORD_ID && process.env.AUTH_DISCORD_SECRET
+    ? [
+        Discord({
+          clientId: process.env.AUTH_DISCORD_ID,
+          clientSecret: process.env.AUTH_DISCORD_SECRET,
+          authorization: { params: { scope: "identify email" } }
+        })
+      ]
+    : []),
   Credentials({
     name: "Email e senha",
     credentials: {
       email: { label: "Email", type: "email" },
       password: { label: "Senha", type: "password" }
     },
-    async authorize(credentials) {
+    async authorize(credentials, request) {
+      const limit = await checkAuthRateLimit(request, "login");
+
+      if (!limit.success) {
+        return null;
+      }
+
       const parsed = credentialsSchema.safeParse(credentials);
 
       if (!parsed.success) {
@@ -40,6 +58,17 @@ const providers = [
 
       if (!user?.passwordHash) {
         return null;
+      }
+
+      if (!user.emailVerified && user.email) {
+        const pendingVerification = await prisma.verificationToken.findFirst({
+          where: { identifier: getEmailVerificationIdentifier(user.email) },
+          select: { identifier: true }
+        });
+
+        if (pendingVerification) {
+          return null;
+        }
       }
 
       const passwordMatches = await compare(parsed.data.password, user.passwordHash);
@@ -63,6 +92,8 @@ const providers = [
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  secret: process.env.AUTH_SECRET,
+  trustHost: true,
   providers,
   pages: {
     signIn: "/login"

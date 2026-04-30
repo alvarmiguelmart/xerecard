@@ -27,7 +27,7 @@ export function ServiceRail({
         </div>
       </div>
 
-      <div className="marketplace-scrollbar mt-5 flex snap-x items-stretch gap-5 overflow-x-auto pb-5 pr-4">
+      <div className="marketplace-scrollbar stagger-list mt-5 flex snap-x items-stretch gap-5 overflow-x-auto pb-5 pr-4">
         {services.map((service) => (
           <div
             key={service.id}
@@ -40,3 +40,4 @@ export function ServiceRail({
     </section>
   );
 }
+

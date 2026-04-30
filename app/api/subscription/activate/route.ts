@@ -1,15 +1,36 @@
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import { auth } from "@/lib/auth";
-import { normalizePaidPlan, pixAmounts, planPriceIds } from "@/lib/billing";
+import {
+  hasActiveContactAccess,
+  normalizePaidPlan,
+  planPriceIds,
+  subscriptionTrialDays
+} from "@/lib/billing";
 import { prisma } from "@/lib/prisma";
 import { getAppUrl, getStripe } from "@/lib/stripe";
 
 type ActivatePayload = {
   plan?: string;
-  method?: "card" | "pix";
+  method?: "card";
 };
 
 export async function POST(request: Request) {
+  try {
+    return await createCheckoutSession(request);
+  } catch (error) {
+    if (error instanceof Stripe.errors.StripeError) {
+      return NextResponse.json(
+        { message: error.message || "Stripe não conseguiu iniciar o pagamento." },
+        { status: error.statusCode ?? 502 }
+      );
+    }
+
+    throw error;
+  }
+}
+
+async function createCheckoutSession(request: Request) {
   const session = await auth();
 
   if (!session) {
@@ -30,7 +51,7 @@ export async function POST(request: Request) {
 
   const body = (await request.json().catch(() => null)) as ActivatePayload | null;
   const plan = normalizePaidPlan(body?.plan);
-  const method = body?.method === "pix" ? "pix" : "card";
+  const method = "card";
   const appUrl = getAppUrl();
   const user = await prisma.user.findUnique({ where: { id: session.user.id } });
 
@@ -39,6 +60,13 @@ export async function POST(request: Request) {
       { message: "Usuário sem email válido para checkout." },
       { status: 400 }
     );
+  }
+
+  if (hasActiveContactAccess(user)) {
+    return NextResponse.json({
+      ok: true,
+      url: `${appUrl}/minha-conta?checkout=already-active`
+    });
   }
 
   let customerId = user.stripeCustomerId;
@@ -54,10 +82,34 @@ export async function POST(request: Request) {
       where: { id: user.id },
       data: { stripeCustomerId: customerId }
     });
+  } else {
+    try {
+      await stripe.customers.retrieve(customerId);
+    } catch (error) {
+      if (!(error instanceof Stripe.errors.StripeError && error.code === "resource_missing")) {
+        throw error;
+      }
+
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: user.name ?? undefined,
+        metadata: { userId: user.id }
+      });
+      customerId = customer.id;
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: null,
+          stripeSubscriptionStatus: null
+        }
+      });
+    }
   }
 
   if (method === "card") {
     const price = planPriceIds[plan];
+    const trialEligible = !user.stripeSubscriptionId && user.plan === "FREE";
 
     if (!price) {
       return NextResponse.json(
@@ -71,35 +123,26 @@ export async function POST(request: Request) {
       customer: customerId,
       payment_method_types: ["card"],
       line_items: [{ price, quantity: 1 }],
+      subscription_data: {
+        trial_period_days: trialEligible ? subscriptionTrialDays : undefined,
+        metadata: { userId: user.id, plan, method }
+      },
       success_url: `${appUrl}/minha-conta?checkout=success`,
       cancel_url: `${appUrl}/minha-conta?checkout=cancel`,
-      metadata: { userId: user.id, plan, method }
+      metadata: {
+        userId: user.id,
+        plan,
+        method,
+        trialDays: trialEligible ? String(subscriptionTrialDays) : "0"
+      }
     });
 
     return NextResponse.json({ ok: true, url: checkout.url });
   }
 
-  const checkout = await stripe.checkout.sessions.create({
-    mode: "payment",
-    customer: customerId,
-    payment_method_types: ["pix"],
-    line_items: [
-      {
-        price_data: {
-          currency: "brl",
-          product_data: { name: `Xerecard ${plan === "ESSENTIAL" ? "Essencial" : "Profissional"}` },
-          unit_amount: pixAmounts[plan]
-        },
-        quantity: 1
-      }
-    ],
-    payment_method_options: {
-      pix: { expires_after_seconds: 3600 }
-    },
-    success_url: `${appUrl}/minha-conta?checkout=success`,
-    cancel_url: `${appUrl}/minha-conta?checkout=cancel`,
-    metadata: { userId: user.id, plan, method }
-  });
-
-  return NextResponse.json({ ok: true, url: checkout.url });
+  return NextResponse.json(
+    { message: "Pix temporariamente indisponível. Use cartão para ativar o teste." },
+    { status: 400 }
+  );
 }
+

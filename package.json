@@ -10,6 +10,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate"

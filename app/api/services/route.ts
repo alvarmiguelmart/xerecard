@@ -6,9 +6,24 @@ import { saveUpload } from "@/lib/upload";
 import { createServiceSchema } from "@/lib/validations";
 import type { ServiceMode } from "@prisma/client";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const modeParam = searchParams.get("mode");
+  const mode = modeParam === "REQUEST" || modeParam === "OFFER" ? modeParam : "all";
+  const takeParam = Number(searchParams.get("take") ?? 60);
+
   try {
-    return NextResponse.json({ services: await listServices() });
+    return NextResponse.json({
+      services: await listServices({
+        query: searchParams.get("busca") ?? undefined,
+        category: searchParams.get("categoria") ?? undefined,
+        location: searchParams.get("cidade") ?? undefined,
+        verifiedOnly: searchParams.get("verificados") === "true",
+        cursor: searchParams.get("cursor") ?? undefined,
+        mode,
+        take: Number.isInteger(takeParam) ? takeParam : 60
+      })
+    });
   } catch (error) {
     if (error instanceof DatabaseError) {
       return NextResponse.json(
@@ -67,7 +82,17 @@ export async function POST(request: Request) {
     mode === "REQUEST" ? "/generated/service-request.png" : "/generated/service-offer.png";
 
   if (photo instanceof File && photo.size > 0) {
-    imageUrl = await saveUpload(photo, "services");
+    try {
+      imageUrl = await saveUpload(photo, "services");
+    } catch (error) {
+      return NextResponse.json(
+        {
+          message:
+            error instanceof Error ? error.message : "Não conseguimos salvar a imagem."
+        },
+        { status: 400 }
+      );
+    }
   }
 
   const service = await createService({
@@ -84,3 +109,4 @@ export async function POST(request: Request) {
 
   return NextResponse.json({ ok: true, service }, { status: 201 });
 }
+

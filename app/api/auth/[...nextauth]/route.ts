@@ -5,7 +5,7 @@ import { checkAuthRateLimit } from "@/lib/rate-limit";
 export const GET = handlers.GET;
 
 export async function POST(request: NextRequest) {
-  const limit = checkAuthRateLimit(request);
+  const limit = await checkAuthRateLimit(request, "auth-post");
 
   if (!limit.success) {
     return Response.json(
@@ -21,3 +21,4 @@ export async function POST(request: NextRequest) {
 
   return handlers.POST(request);
 }
+
