@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { createService, DatabaseError, listServices } from "@/lib/marketplace-db";
 import { normalizeBrazilianWhatsApp } from "@/lib/phone";
-import { saveUpload } from "@/lib/upload";
+import { deleteUpload, saveUpload } from "@/lib/upload";
 import { createServiceSchema } from "@/lib/validations";
 import type { ServiceMode } from "@prisma/client";
 
@@ -80,10 +80,12 @@ export async function POST(request: Request) {
 
   let imageUrl =
     mode === "REQUEST" ? "/generated/service-request.png" : "/generated/service-offer.png";
+  let uploadedImageUrl: string | null = null;
 
   if (photo instanceof File && photo.size > 0) {
     try {
       imageUrl = await saveUpload(photo, "services");
+      uploadedImageUrl = imageUrl;
     } catch (error) {
       return NextResponse.json(
         {
@@ -95,18 +97,26 @@ export async function POST(request: Request) {
     }
   }
 
-  const service = await createService({
-    mode: parsed.data.mode,
-    title: parsed.data.title,
-    category: parsed.data.category,
-    location: parsed.data.location,
-    priceLabel: parsed.data.priceLabel,
-    description: parsed.data.description,
-    whatsapp: parsed.data.whatsapp,
-    ownerId: session.user.id,
-    imageUrl
-  });
+  try {
+    const service = await createService({
+      mode: parsed.data.mode,
+      title: parsed.data.title,
+      category: parsed.data.category,
+      location: parsed.data.location,
+      priceLabel: parsed.data.priceLabel,
+      description: parsed.data.description,
+      whatsapp: parsed.data.whatsapp,
+      ownerId: session.user.id,
+      imageUrl
+    });
 
-  return NextResponse.json({ ok: true, service }, { status: 201 });
+    return NextResponse.json({ ok: true, service }, { status: 201 });
+  } catch (error) {
+    if (uploadedImageUrl) {
+      await deleteUpload(uploadedImageUrl);
+    }
+
+    throw error;
+  }
 }
 

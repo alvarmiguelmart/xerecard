@@ -106,6 +106,16 @@ body > * {
   z-index: 1;
 }
 
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+.goog-te-gadget {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
 svg {
   color: #38bdf8 !important;
   filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.28));

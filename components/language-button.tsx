@@ -4,51 +4,37 @@ import { Languages } from "lucide-react";
 
 export function LanguageButton() {
   function toggleEnglishVersion() {
-    const currentUrl = new URL(window.location.href);
+    const isEnglish = document.cookie.includes("googtrans=/pt/en");
+    const nextValue = isEnglish ? "/pt/pt" : "/pt/en";
+    const maxAge = 60 * 60 * 24 * 365;
 
-    if (currentUrl.pathname === "/en") {
-      window.location.href = "/";
+    document.cookie = `googtrans=${nextValue};path=/;max-age=${maxAge}`;
+
+    if (!window.location.hostname.includes("localhost")) {
+      document.cookie = `googtrans=${nextValue};path=/;domain=.${window.location.hostname};max-age=${maxAge}`;
+    }
+
+    const combo = document.querySelector<HTMLSelectElement>(".goog-te-combo");
+    if (combo) {
+      combo.value = isEnglish ? "pt" : "en";
+      combo.dispatchEvent(new Event("change"));
       return;
     }
 
-    if (!currentUrl.hostname.includes("translate.google") && !currentUrl.hostname.endsWith(".translate.goog")) {
-      window.location.href = "/en";
-      return;
-    }
-
-    if (currentUrl.hostname.includes("translate.google")) {
-      const originalUrl = currentUrl.searchParams.get("u");
-      if (originalUrl) {
-        window.location.href = originalUrl;
-        return;
-      }
-    }
-
-    if (currentUrl.hostname.endsWith(".translate.goog")) {
-      const originalHost = currentUrl.hostname
-        .replace(/\.translate\.goog$/, "")
-        .replace(/-/g, ".");
-      window.location.href = `https://${originalHost}${currentUrl.pathname}`;
-      return;
-    }
-
-    const url = new URL("https://translate.google.com/translate");
-    url.searchParams.set("sl", "pt");
-    url.searchParams.set("tl", "en");
-    url.searchParams.set("u", window.location.href);
-    window.location.href = url.toString();
+    window.location.reload();
   }
 
   return (
     <button
       type="button"
-      className="focus-ring action-secondary inline-flex min-h-10 min-w-16 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-black"
+      className="notranslate focus-ring action-secondary inline-flex min-h-10 min-w-16 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-black"
       aria-label="Alternar versão em inglês e português"
       title="English / Português"
+      translate="no"
       onClick={toggleEnglishVersion}
     >
       <Languages size={15} aria-hidden="true" />
-      EN
+      <span translate="no">EN</span>
     </button>
   );
 }

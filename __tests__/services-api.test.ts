@@ -2,6 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const auth = vi.fn();
 const createService = vi.fn();
+const deleteUpload = vi.fn();
+const saveUpload = vi.fn();
 
 vi.mock("@/lib/auth", () => ({ auth }));
 vi.mock("@/lib/marketplace-db", () => ({
@@ -9,7 +11,7 @@ vi.mock("@/lib/marketplace-db", () => ({
   listServices: vi.fn(),
   DatabaseError: class DatabaseError extends Error {}
 }));
-vi.mock("@/lib/upload", () => ({ saveUpload: vi.fn() }));
+vi.mock("@/lib/upload", () => ({ deleteUpload, saveUpload }));
 
 function validFormData() {
   const formData = new FormData();
@@ -27,6 +29,8 @@ describe("services API", () => {
   beforeEach(() => {
     auth.mockReset();
     createService.mockReset();
+    deleteUpload.mockReset();
+    saveUpload.mockReset();
   });
 
   it("POST /api/services with valid data returns 201", async () => {
@@ -71,5 +75,23 @@ describe("services API", () => {
     }));
 
     expect(response.status).toBe(401);
+  });
+
+  it("removes uploaded image when service creation fails", async () => {
+    auth.mockResolvedValue({ user: { id: "user-1" } });
+    saveUpload.mockResolvedValue("/uploads/services/temp.png");
+    createService.mockRejectedValue(new Error("database failed"));
+    const formData = validFormData();
+    formData.set("photos", new File(["image"], "service.png", { type: "image/png" }));
+    const { POST } = await import("@/app/api/services/route");
+
+    await expect(
+      POST(new Request("http://test.local/api/services", {
+        method: "POST",
+        body: formData
+      }))
+    ).rejects.toThrow("database failed");
+
+    expect(deleteUpload).toHaveBeenCalledWith("/uploads/services/temp.png");
   });
 });

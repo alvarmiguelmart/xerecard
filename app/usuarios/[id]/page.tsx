@@ -90,9 +90,8 @@ export default async function UserProfilePage({ params }: UserProfilePageProps) 
                   priority
                 />
               ) : (
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(56,189,248,0.34),transparent_34%),linear-gradient(135deg,#050505_0%,#0a0a0a_58%,rgba(56,189,248,0.22)_160%)]" />
+                <div className="absolute inset-0 bg-panel" />
               )}
-              <div className="absolute inset-0 bg-black/24" />
             </div>
             <div className="grid gap-6 md:grid-cols-[auto_1fr_auto] md:items-center">
               <UserAvatar
