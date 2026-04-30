@@ -4,10 +4,13 @@ import { KeyRound, Mail } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { readJsonResponse } from "@/lib/http";
+import { cn } from "@/lib/utils";
 
 export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | null }) {
   const [emailMessage, setEmailMessage] = useState("");
+  const [emailStatus, setEmailStatus] = useState<"error" | "success" | null>(null);
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [passwordStatus, setPasswordStatus] = useState<"error" | "success" | null>(null);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
 
@@ -15,6 +18,7 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
     event.preventDefault();
     setIsEmailLoading(true);
     setEmailMessage("");
+    setEmailStatus(null);
 
     const formData = new FormData(event.currentTarget);
 
@@ -38,11 +42,13 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
           ? `Confirme no link: ${data.verifyUrl}`
           : (data.message ?? "Confirme o novo email para concluir.")
       );
+      setEmailStatus("success");
       event.currentTarget.reset();
     } catch (error) {
       setEmailMessage(
         error instanceof Error ? error.message : "Não conseguimos iniciar a troca de email."
       );
+      setEmailStatus("error");
     } finally {
       setIsEmailLoading(false);
     }
@@ -52,6 +58,7 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
     event.preventDefault();
     setIsPasswordLoading(true);
     setPasswordMessage("");
+    setPasswordStatus(null);
 
     const formData = new FormData(event.currentTarget);
     const newPassword = String(formData.get("newPassword") ?? "");
@@ -59,6 +66,7 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
 
     if (newPassword !== confirmPassword) {
       setPasswordMessage("As senhas não conferem.");
+      setPasswordStatus("error");
       setIsPasswordLoading(false);
       return;
     }
@@ -79,9 +87,11 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
       }
 
       setPasswordMessage(data.message ?? "Senha alterada.");
+      setPasswordStatus("success");
       event.currentTarget.reset();
     } catch (error) {
       setPasswordMessage(error instanceof Error ? error.message : "Não conseguimos trocar sua senha.");
+      setPasswordStatus("error");
     } finally {
       setIsPasswordLoading(false);
     }
@@ -94,9 +104,7 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
           <Mail size={18} aria-hidden="true" />
           <h4 className="text-base font-black text-ink">Trocar email</h4>
         </div>
-        <p className="text-xs font-semibold text-ink/54">
-          Email atual: {currentEmail ?? "não informado"}. O novo email precisa ser confirmado.
-        </p>
+        <p className="text-xs font-semibold text-ink/54">Atual: {currentEmail ?? "não informado"}</p>
         <input
           name="newEmail"
           type="email"
@@ -118,7 +126,14 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
         <Button type="submit" variant="secondary" disabled={isEmailLoading}>
           {isEmailLoading ? "Enviando" : "Confirmar novo email"}
         </Button>
-        <p className="min-h-5 text-sm font-semibold text-ink" role="status">
+        <p
+          className={cn(
+            "min-h-5 text-sm font-semibold",
+            emailStatus === "success" ? "text-ink" : "text-coral"
+          )}
+          role="status"
+          aria-live="polite"
+        >
           {emailMessage}
         </p>
       </form>
@@ -161,7 +176,14 @@ export function AccountSecurityForm({ currentEmail }: { currentEmail?: string | 
         <Button type="submit" variant="secondary" disabled={isPasswordLoading}>
           {isPasswordLoading ? "Salvando" : "Alterar senha"}
         </Button>
-        <p className="min-h-5 text-sm font-semibold text-ink" role="status">
+        <p
+          className={cn(
+            "min-h-5 text-sm font-semibold",
+            passwordStatus === "success" ? "text-ink" : "text-coral"
+          )}
+          role="status"
+          aria-live="polite"
+        >
           {passwordMessage}
         </p>
       </form>

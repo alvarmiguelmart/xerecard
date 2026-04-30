@@ -23,6 +23,10 @@ type EditableService = {
 
 const maxImageSize = 4 * 1024 * 1024;
 
+function formatFileSize(size: number) {
+  return `${(size / 1024 / 1024).toFixed(1)}MB`;
+}
+
 export function ServiceForm({
   initialMode = "REQUEST",
   initialService
@@ -42,6 +46,9 @@ export function ServiceForm({
   const [cropZoom, setCropZoom] = useState(1);
   const isEditing = Boolean(initialService);
   const isGifUpload = photoFile?.type === "image/gif";
+  const photoStatus = photoFile
+    ? `${photoFile.type.replace("image/", "").toUpperCase()} · ${formatFileSize(photoFile.size)}`
+    : "PNG, JPG, WebP, AVIF ou GIF animado · até 4MB";
 
   async function buildCroppedImage(file: File) {
     if (file.type === "image/gif") {
@@ -343,7 +350,7 @@ export function ServiceForm({
           </span>
         </span>
         <span className="text-xs font-semibold text-ink/48">
-          PNG, JPG, WebP, AVIF ou GIF animado até 4MB. Ajuste o corte para escolher a parte visível.
+          {photoStatus}. {isGifUpload ? "GIF mantém animação; corte fica desligado." : "Ajuste o corte para escolher a parte visível."}
         </span>
         <input type="file" name="photos" className="sr-only" accept="image/*" onChange={handlePhotoChange} />
       </label>

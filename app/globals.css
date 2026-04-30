@@ -19,12 +19,30 @@
   color-scheme: dark;
   --background: #000000;
   --foreground: #ffffff;
+  --ui-bg: #000000;
+  --ui-surface: #050505;
+  --ui-surface-muted: #0a0a0a;
+  --ui-border: rgba(237, 247, 239, 0.12);
+  --ui-text: #ffffff;
+  --ui-muted: rgb(237 247 239 / 0.62);
+  --ui-primary: #050505;
+  --ui-primary-text: #ffffff;
+  --ui-accent: #38bdf8;
 }
 
 body.theme-light {
   color-scheme: light;
   --background: #f7fafc;
   --foreground: #111827;
+  --ui-bg: #f7fafc;
+  --ui-surface: #ffffff;
+  --ui-surface-muted: #eef5f9;
+  --ui-border: rgba(17, 24, 39, 0.12);
+  --ui-text: #111827;
+  --ui-muted: rgb(17 24 39 / 0.62);
+  --ui-primary: #ffffff;
+  --ui-primary-text: #111827;
+  --ui-accent: #d8e5ee;
   --color-ink: #111827;
   --color-panel: #ffffff;
   --color-paper: #f7fafc;
@@ -201,9 +219,9 @@ body.theme-light .card-surface {
 }
 
 .action-primary {
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  background: #050505;
-  color: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--ui-accent) 48%, transparent);
+  background: var(--ui-primary);
+  color: var(--ui-primary-text);
   box-shadow: 0 14px 34px rgba(56, 189, 248, 0.14);
 }
 
@@ -218,9 +236,9 @@ body.theme-light .card-surface {
 }
 
 body.theme-light .action-primary {
-  border-color: rgba(17, 24, 39, 0.18);
-  background: #ffffff;
-  color: #111827;
+  border-color: var(--ui-border);
+  background: var(--ui-primary);
+  color: var(--ui-primary-text);
   box-shadow: 0 12px 28px rgba(17, 24, 39, 0.08);
 }
 
@@ -232,9 +250,9 @@ body.theme-light .action-primary:hover {
 }
 
 .action-secondary {
-  border: 1px solid rgba(237, 247, 239, 0.12);
-  background: #0a0a0a;
-  color: #ffffff;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface-muted);
+  color: var(--ui-text);
 }
 
 .action-secondary:hover {
@@ -245,9 +263,9 @@ body.theme-light .action-primary:hover {
 }
 
 body.theme-light .action-secondary {
-  border-color: rgba(17, 24, 39, 0.14);
-  background: #ffffff;
-  color: #111827;
+  border-color: var(--ui-border);
+  background: var(--ui-surface);
+  color: var(--ui-text);
 }
 
 body.theme-light .action-secondary:hover {
@@ -268,15 +286,15 @@ body.theme-light .surface-card {
 }
 
 .surface-panel {
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  background: #050505;
-  color: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--ui-accent) 48%, transparent);
+  background: var(--ui-surface);
+  color: var(--ui-text);
 }
 
 body.theme-light .surface-panel {
-  border-color: rgba(17, 24, 39, 0.14);
-  background: #ffffff;
-  color: #111827;
+  border-color: var(--ui-border);
+  background: var(--ui-surface);
+  color: var(--ui-text);
 }
 
 .state-active {
@@ -518,17 +536,17 @@ body.theme-light .hero-backdrop {
 .field-control {
   min-height: 3rem;
   border-radius: 0.5rem;
-  border: 1px solid rgba(237, 247, 239, 0.14);
-  background: #050505;
+  border: 1px solid var(--ui-border);
+  background: var(--ui-surface);
   padding-inline: 1rem;
   color: #ffffff;
   transition: border-color 150ms ease, background-color 150ms ease, box-shadow 150ms ease;
 }
 
 body.theme-light .field-control {
-  border-color: rgba(17, 24, 39, 0.14);
-  background: #ffffff;
-  color: #111827;
+  border-color: var(--ui-border);
+  background: var(--ui-surface);
+  color: var(--ui-text);
 }
 
 .field-control-icon {

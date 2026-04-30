@@ -6,6 +6,16 @@ export function LanguageButton() {
   function toggleEnglishVersion() {
     const currentUrl = new URL(window.location.href);
 
+    if (currentUrl.pathname === "/en") {
+      window.location.href = "/";
+      return;
+    }
+
+    if (!currentUrl.hostname.includes("translate.google") && !currentUrl.hostname.endsWith(".translate.goog")) {
+      window.location.href = "/en";
+      return;
+    }
+
     if (currentUrl.hostname.includes("translate.google")) {
       const originalUrl = currentUrl.searchParams.get("u");
       if (originalUrl) {
