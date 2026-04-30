@@ -29,7 +29,6 @@ import { auth } from "@/lib/auth";
 import { hasActiveContactAccess, subscriptionTrialDays } from "@/lib/billing";
 import { plans } from "@/lib/marketplace-data";
 import { prisma } from "@/lib/prisma";
-import { ensureProfileBioColumn } from "@/lib/profile-schema";
 import { cn } from "@/lib/utils";
 
 type AccountPageProps = {
@@ -56,10 +55,6 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
   const session = await auth();
   const profileName = session?.user.name ?? "Usuário Xerecard";
   const profileRole = session?.user.role === "PROFESSIONAL" ? "profissional" : "cliente";
-
-  if (session) {
-    await ensureProfileBioColumn();
-  }
 
   const accountStats = session
     ? await prisma.user.findUnique({

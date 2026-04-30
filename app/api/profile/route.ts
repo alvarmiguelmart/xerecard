@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ensureProfileBioColumn } from "@/lib/profile-schema";
 import { deleteUpload, saveUpload } from "@/lib/upload";
 
 export async function PATCH(request: Request) {
@@ -10,8 +9,6 @@ export async function PATCH(request: Request) {
   if (!session) {
     return NextResponse.json({ message: "Entre para atualizar o perfil." }, { status: 401 });
   }
-
-  await ensureProfileBioColumn();
 
   const formData = await request.formData();
   const name = String(formData.get("name") ?? "").trim();

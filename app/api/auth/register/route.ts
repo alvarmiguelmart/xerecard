@@ -6,6 +6,7 @@ import {
   emailVerificationTtlMs,
   getEmailVerificationIdentifier,
   getEmailVerificationUrl,
+  hasEmailDeliveryConfig,
   sendSignupVerificationEmail
 } from "@/lib/email-verification";
 import { prisma } from "@/lib/prisma";
@@ -68,6 +69,13 @@ export async function POST(request: Request) {
 
   if (existing) {
     return NextResponse.json(duplicateSafeResponse);
+  }
+
+  if (process.env.NODE_ENV === "production" && !hasEmailDeliveryConfig()) {
+    return NextResponse.json(
+      { message: "Confirmação por email indisponível. Tente novamente mais tarde." },
+      { status: 503 }
+    );
   }
 
   try {

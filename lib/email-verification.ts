@@ -3,6 +3,10 @@ import { getAppUrl } from "@/lib/env";
 
 export const emailVerificationTtlMs = 24 * 60 * 60 * 1000;
 
+export function hasEmailDeliveryConfig() {
+  return Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
+}
+
 export function createEmailVerificationToken() {
   const token = randomBytes(32).toString("base64url");
 
@@ -51,7 +55,7 @@ async function sendEmail({
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.EMAIL_FROM;
 
-  if (!apiKey || !from) {
+  if (!hasEmailDeliveryConfig() || !apiKey || !from) {
     return false;
   }
 
