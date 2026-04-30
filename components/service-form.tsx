@@ -172,12 +172,12 @@ export function ServiceForm({
   }
 
   return (
-    <form className="glass-panel motion-rise grid gap-5 rounded-xl p-5 md:p-6" onSubmit={handleSubmit}>
+    <form className="glass-panel-strong motion-rise grid gap-5 rounded-xl p-5 md:p-6" onSubmit={handleSubmit}>
       <div className="grid gap-3 sm:grid-cols-2">
         <button
           type="button"
           className={`focus-ring flex items-center gap-3 rounded-lg border px-4 py-4 text-left font-black transition ${
-            mode === "REQUEST" ? "state-active" : "border-ink/12 bg-cloud"
+            mode === "REQUEST" ? "state-active" : "action-secondary"
           }`}
           onClick={() => setMode("REQUEST")}
         >
@@ -187,7 +187,7 @@ export function ServiceForm({
         <button
           type="button"
           className={`focus-ring flex items-center gap-3 rounded-lg border px-4 py-4 text-left font-black transition ${
-            mode === "OFFER" ? "state-active" : "border-ink/12 bg-cloud"
+            mode === "OFFER" ? "state-active" : "action-secondary"
           }`}
           onClick={() => setMode("OFFER")}
         >
@@ -318,9 +318,9 @@ export function ServiceForm({
         </span>
       </label>
 
-      <div className="rounded-lg border border-ink/10 bg-cloud p-4">
+      <div className="surface-panel rounded-lg p-4">
         <p className="flex items-center gap-2 text-sm font-black text-ink">
-          <Lightbulb size={16} className="text-white" aria-hidden="true" />
+          <Lightbulb size={16} aria-hidden="true" />
           Dicas para anúncios que convertem
         </p>
         <ul className="mt-3 grid gap-2 text-xs font-semibold text-ink/62">
@@ -330,14 +330,14 @@ export function ServiceForm({
             "Responda rápido para aumentar chance de fechar negócio."
           ].map((tip) => (
             <li key={tip} className="flex gap-2">
-              <Sparkles size={14} className="mt-0.5 shrink-0 text-white" aria-hidden="true" />
+              <Sparkles size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
               {tip}
             </li>
           ))}
         </ul>
       </div>
 
-      <label className="grid cursor-pointer gap-2 rounded-lg border border-dashed border-ink/18 bg-cloud p-4 text-sm font-bold text-ink/70 transition hover:border-sky/45 hover:bg-white">
+      <label className="grid cursor-pointer gap-2 rounded-lg border border-dashed border-ink/18 bg-panel p-4 text-sm font-bold text-ink/70 transition hover:border-sky/45 hover:bg-cloud">
         <span className="flex items-center justify-between gap-3">
           <span className="flex min-w-0 items-center gap-3">
             <Upload size={18} className="shrink-0" aria-hidden="true" />

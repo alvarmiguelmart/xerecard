@@ -28,7 +28,7 @@ function ListingTile({ service }: { service: MarketplaceService }) {
       className="focus-ring group block"
       aria-label={`Abrir anúncio ${service.title}`}
     >
-      <article className="spatial-card overflow-hidden rounded-xl border border-ink/10 bg-white transition hover:border-sky/35">
+      <article className="card-surface spatial-card overflow-hidden rounded-xl transition hover:border-sky/35">
         <div className="relative aspect-[4/3] bg-cloud sm:aspect-square">
           <Image
             src={service.image}
@@ -37,7 +37,7 @@ function ListingTile({ service }: { service: MarketplaceService }) {
             sizes="(min-width: 1024px) 25vw, 50vw"
             className="object-cover transition duration-300 group-hover:scale-[1.02]"
           />
-          <span className="absolute left-2 top-2 rounded-full bg-white/92 px-2.5 py-1 text-[0.68rem] font-black uppercase text-ink backdrop-blur">
+          <span className="absolute left-2 top-2 rounded-full border border-ink/10 bg-panel/92 px-2.5 py-1 text-[0.68rem] font-black uppercase text-ink backdrop-blur">
             {service.mode === "REQUEST" ? "Pedido" : "Oferta"}
           </span>
         </div>
