@@ -1,10 +1,18 @@
 "use client";
 
 import { Languages } from "lucide-react";
+import { useState } from "react";
+
+function isTranslatedToEnglish() {
+  return document.cookie.includes("googtrans=/pt/en");
+}
 
 export function LanguageButton() {
+  const [isEnglish, setIsEnglish] = useState(() =>
+    typeof document === "undefined" ? false : isTranslatedToEnglish()
+  );
+
   function toggleEnglishVersion() {
-    const isEnglish = document.cookie.includes("googtrans=/pt/en");
     const nextValue = isEnglish ? "/pt/pt" : "/pt/en";
     const maxAge = 60 * 60 * 24 * 365;
 
@@ -18,6 +26,7 @@ export function LanguageButton() {
     if (combo) {
       combo.value = isEnglish ? "pt" : "en";
       combo.dispatchEvent(new Event("change"));
+      setIsEnglish(!isEnglish);
       return;
     }
 
@@ -31,10 +40,11 @@ export function LanguageButton() {
       aria-label="Alternar versão em inglês e português"
       title="English / Português"
       translate="no"
+      aria-pressed={isEnglish}
       onClick={toggleEnglishVersion}
     >
       <Languages size={15} aria-hidden="true" />
-      <span translate="no">EN</span>
+      <span translate="no">{isEnglish ? "PT" : "EN"}</span>
     </button>
   );
 }

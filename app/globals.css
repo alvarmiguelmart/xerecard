@@ -116,25 +116,15 @@ body {
   top: 0 !important;
 }
 
-svg {
-  color: #38bdf8 !important;
-  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.28));
-}
-
-body.theme-light svg {
-  color: #111827 !important;
-  filter: none;
-}
-
 svg.icon-like {
-  color: #ff6a3d !important;
-  fill: #ff6a3d !important;
+  color: #ff6a3d;
+  fill: #ff6a3d;
   filter: drop-shadow(0 0 8px rgba(255, 106, 61, 0.26));
 }
 
 svg.icon-star {
-  color: #ffe86b !important;
-  fill: #ffe86b !important;
+  color: #ffe86b;
+  fill: #ffe86b;
   filter: drop-shadow(0 0 8px rgba(255, 232, 107, 0.28));
 }
 
@@ -283,6 +273,20 @@ body.theme-light .action-secondary:hover {
   background: #f8fbfd;
   color: #111827;
   box-shadow: 0 14px 30px rgba(17, 24, 39, 0.08);
+}
+
+.brand-mark {
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: #050505;
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.14);
+}
+
+body.theme-light .brand-mark {
+  border-color: rgba(17, 24, 39, 0.12);
+  background: #eef5f9;
+  color: #111827;
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
 }
 
 .surface-card {

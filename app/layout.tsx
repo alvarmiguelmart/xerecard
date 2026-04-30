@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
+import { TranslationProvider } from "@/components/translation-provider";
 import { getMetadataBaseUrl } from "@/lib/env";
 import "./globals.css";
 
@@ -43,19 +43,7 @@ export default function RootLayout({
               "try{if(localStorage.getItem('xerecard-theme')==='light')document.body.classList.add('theme-light')}catch(e){}"
           }}
         />
-        <div id="google_translate_element" className="hidden" />
-        <Script
-          id="google-translate-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html:
-              "window.googleTranslateElementInit=function(){new window.google.translate.TranslateElement({pageLanguage:'pt',includedLanguages:'en,pt',autoDisplay:false},'google_translate_element')};"
-          }}
-        />
-        <Script
-          src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-          strategy="afterInteractive"
-        />
+        <TranslationProvider />
         {children}
       </body>
     </html>

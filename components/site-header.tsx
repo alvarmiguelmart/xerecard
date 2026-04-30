@@ -31,17 +31,17 @@ export async function SiteHeader() {
           className="focus-ring flex items-center rounded-md text-2xl font-black tracking-normal text-ink md:text-4xl"
           aria-label="xR início"
         >
-          <span className="grid size-9 place-items-center rounded-lg border border-sky/35 bg-panel text-sm text-white shadow-[0_10px_24px_rgba(56,189,248,0.14)] md:size-11 md:text-base">
+          <span className="brand-mark grid size-9 place-items-center rounded-lg text-sm md:size-11 md:text-base">
             xR
           </span>
         </Link>
 
-        <nav className="hidden items-center rounded-full border border-ink/10 bg-white/70 p-1 shadow-[0_12px_30px_rgba(0,0,0,0.16)] md:flex" aria-label="Principal">
+        <nav className="hidden items-center rounded-full border border-ink/10 bg-panel/88 p-1.5 shadow-[0_12px_30px_rgba(0,0,0,0.16)] md:flex" aria-label="Principal">
           {navigation.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="focus-ring rounded-full px-4 py-2 text-sm font-black text-ink/64 transition hover:bg-panel hover:text-white"
+              className="focus-ring rounded-full px-5 py-2.5 text-sm font-black text-ink/72 transition hover:bg-cloud hover:text-ink"
             >
               {item.label}
             </Link>
@@ -113,7 +113,7 @@ export async function SiteHeader() {
           <Link
             key={item.href}
             href={item.href}
-            className="focus-ring rounded-full border border-ink/10 bg-white px-4 py-2 text-sm font-black text-ink/70"
+            className="focus-ring action-secondary rounded-full px-4 py-2 text-sm font-black"
           >
             {item.label}
           </Link>
