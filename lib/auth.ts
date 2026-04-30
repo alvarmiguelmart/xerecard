@@ -6,6 +6,7 @@ import Discord from "next-auth/providers/discord";
 import Google from "next-auth/providers/google";
 import { z } from "zod";
 import { jwtCallback, sessionCallback } from "@/lib/auth-callbacks";
+import { getEmailVerificationIdentifier } from "@/lib/email-verification";
 import { prisma } from "@/lib/prisma";
 import { checkAuthRateLimit } from "@/lib/rate-limit";
 
@@ -59,8 +60,15 @@ const providers = [
         return null;
       }
 
-      if (!user.emailVerified) {
-        return null;
+      if (!user.emailVerified && user.email) {
+        const pendingVerification = await prisma.verificationToken.findFirst({
+          where: { identifier: getEmailVerificationIdentifier(user.email) },
+          select: { identifier: true }
+        });
+
+        if (pendingVerification) {
+          return null;
+        }
       }
 
       const passwordMatches = await compare(parsed.data.password, user.passwordHash);

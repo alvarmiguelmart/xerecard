@@ -6,6 +6,7 @@ import {
 } from "@/lib/marketplace-data";
 import { getDatabaseConfigIssue } from "@/lib/env";
 import { normalizeBrazilianWhatsApp } from "@/lib/phone";
+import { ensureProfileBioColumn } from "@/lib/profile-schema";
 import { prisma } from "@/lib/prisma";
 
 type ServiceWithRelations = Service & {
@@ -308,6 +309,7 @@ export async function listNotifications({
 export async function findPublicProfile(userId: string) {
   try {
     assertDatabaseReady();
+    await ensureProfileBioColumn();
 
     const user = await prisma.user.findUnique({
       where: { id: userId },

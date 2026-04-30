@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { TranslationProvider } from "@/components/translation-provider";
 import { getMetadataBaseUrl } from "@/lib/env";
 import "./globals.css";
 
@@ -43,7 +42,6 @@ export default function RootLayout({
               "try{if(localStorage.getItem('xerecard-theme')==='light')document.body.classList.add('theme-light')}catch(e){}"
           }}
         />
-        <TranslationProvider />
         {children}
       </body>
     </html>

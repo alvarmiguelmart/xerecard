@@ -35,12 +35,12 @@ export default async function NewServicePage({ searchParams }: NewServicePagePro
               preço e detalhes. Quanto mais específico, melhor a conversa.
             </p>
             <div className="stagger-list mt-6 grid gap-3 text-sm font-black text-ink/66">
-              <p className="surface-panel spatial-card flex items-center gap-3 rounded-xl p-4">
-                <Handshake size={18} aria-hidden="true" />
+              <p className="glass-panel spatial-card flex items-center gap-3 rounded-xl p-4">
+                <Handshake size={18} className="text-white" aria-hidden="true" />
                 Pedido: quando você precisa encontrar alguém para resolver.
               </p>
-              <p className="surface-panel spatial-card flex items-center gap-3 rounded-xl p-4">
-                <BriefcaseBusiness size={18} aria-hidden="true" />
+              <p className="glass-panel spatial-card flex items-center gap-3 rounded-xl p-4">
+                <BriefcaseBusiness size={18} className="text-white" aria-hidden="true" />
                 Oferta: quando você quer anunciar seu trabalho.
               </p>
             </div>

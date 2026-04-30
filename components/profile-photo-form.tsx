@@ -9,10 +9,6 @@ import { readJsonResponse } from "@/lib/http";
 
 const maxImageSize = 4 * 1024 * 1024;
 
-function formatFileSize(size: number) {
-  return `${(size / 1024 / 1024).toFixed(1)}MB`;
-}
-
 export function ProfilePhotoForm({
   bannerImage,
   bio,
@@ -41,12 +37,6 @@ export function ProfilePhotoForm({
   const [isLoading, setIsLoading] = useState(false);
   const isProfileGif = profileFile?.type === "image/gif";
   const isBannerGif = bannerFile?.type === "image/gif";
-  const bannerStatus = bannerFile
-    ? `${bannerFile.type.replace("image/", "").toUpperCase()} · ${formatFileSize(bannerFile.size)}`
-    : "PNG, JPG, WebP, AVIF ou GIF animado · até 4MB";
-  const profileStatus = profileFile
-    ? `${profileFile.type.replace("image/", "").toUpperCase()} · ${formatFileSize(profileFile.size)}`
-    : "PNG, JPG, WebP, AVIF ou GIF animado · até 4MB";
 
   async function buildCroppedImage(
     file: File,
@@ -225,7 +215,7 @@ export function ProfilePhotoForm({
           />
         </label>
         <p className="text-xs font-semibold text-ink/50">
-          {bannerStatus}. {isBannerGif ? "GIF mantém animação; corte fica desligado." : "Use o ajuste para escolher a parte visível."}
+          PNG, JPG, WebP, AVIF ou GIF animado até 4MB. A imagem do banner é alterada pelo botão.
         </p>
       </div>
       {bannerFile ? (
@@ -289,7 +279,7 @@ export function ProfilePhotoForm({
             />
           </label>
           <p className="mt-2 text-xs font-semibold text-ink/50">
-            {profileStatus}. {isProfileGif ? "GIF mantém animação; corte fica desligado." : "Use o ajuste para enquadrar o rosto."}
+            PNG, JPG, WebP, AVIF ou GIF animado até 4MB.
           </p>
         </div>
       </div>

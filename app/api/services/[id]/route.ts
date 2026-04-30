@@ -61,12 +61,10 @@ export async function PATCH(request: Request, context: ServiceRouteContext) {
   }
 
   let imageUrl: string | undefined;
-  let uploadedImageUrl: string | null = null;
 
   if (photo instanceof File && photo.size > 0) {
     try {
       imageUrl = await saveUpload(photo, "services");
-      uploadedImageUrl = imageUrl;
     } catch (error) {
       return NextResponse.json(
         {
@@ -98,10 +96,6 @@ export async function PATCH(request: Request, context: ServiceRouteContext) {
 
     return NextResponse.json({ ok: true, service });
   } catch (error) {
-    if (uploadedImageUrl) {
-      await deleteUpload(uploadedImageUrl);
-    }
-
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
       return NextResponse.json({ message: "Anúncio não encontrado." }, { status: 404 });
     }

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Bell, LockKeyhole } from "lucide-react";
 import { AuthForm } from "@/components/auth-form";
-import { ResendVerificationForm } from "@/components/resend-verification-form";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
@@ -85,7 +84,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               </p>
             ) : null}
             <AuthForm mode="login" providers={providers} callbackUrl={callbackUrl} />
-            <ResendVerificationForm />
           </div>
         </section>
       </main>
