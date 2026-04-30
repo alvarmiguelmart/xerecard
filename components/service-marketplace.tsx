@@ -97,7 +97,7 @@ export function ServiceMarketplace({
 
   return (
     <>
-      <div className="glass-panel rounded-xl p-5 md:p-7">
+      <div className="glass-panel-strong rounded-xl p-5 md:p-7">
         <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="section-label">Marketplace</p>
@@ -129,7 +129,7 @@ export function ServiceMarketplace({
               "focus-ring inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-black transition",
               filtersOpen
                 ? "state-active"
-                : "border-ink/12 bg-cloud text-ink hover:border-sky/35 hover:bg-panel hover:text-white"
+                : "action-secondary"
             )}
             aria-expanded={filtersOpen}
             onClick={() => setFiltersOpen((open) => !open)}
@@ -142,14 +142,14 @@ export function ServiceMarketplace({
               </span>
             ) : null}
           </button>
-          <div className="grid grid-cols-3 gap-1 rounded-lg bg-cloud p-1 text-sm font-black text-ink/62">
+          <div className="grid grid-cols-3 gap-1 rounded-lg border border-ink/10 bg-panel p-1 text-sm font-black text-ink/62">
             {filters.map((filter) => (
               <button
                 key={filter.value}
                 type="button"
                 className={cn(
                   "focus-ring rounded-md px-3 py-2 text-center",
-                  mode === filter.value ? "state-active" : "hover:bg-panel hover:text-white"
+                  mode === filter.value ? "state-active" : "hover:bg-cloud hover:text-ink"
                 )}
                 onClick={() => setMode(filter.value)}
               >
@@ -168,7 +168,7 @@ export function ServiceMarketplace({
                   "focus-ring rounded-full px-3 py-1.5 text-xs font-black transition",
                   category === "all"
                     ? "state-active"
-                    : "border border-ink/10 bg-cloud text-ink/62 hover:bg-panel hover:text-white"
+                    : "action-secondary"
                 )}
               >
                 Todas
@@ -182,7 +182,7 @@ export function ServiceMarketplace({
                     "focus-ring rounded-full px-3 py-1.5 text-xs font-black transition",
                     category === item
                       ? "state-active"
-                      : "border border-ink/10 bg-cloud text-ink/62 hover:bg-panel hover:text-white"
+                      : "action-secondary"
                   )}
                 >
                   {item}
@@ -190,7 +190,7 @@ export function ServiceMarketplace({
               ))}
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <label className="flex min-h-10 items-center gap-2 rounded-lg border border-ink/10 bg-white px-3 py-2 text-sm font-bold text-ink/62">
+              <label className="flex min-h-10 items-center gap-2 rounded-lg border border-ink/10 bg-panel px-3 py-2 text-sm font-bold text-ink/62">
                 <MapPin size={14} aria-hidden="true" />
                 <input
                   type="text"
@@ -207,13 +207,13 @@ export function ServiceMarketplace({
                   "focus-ring inline-flex min-h-10 items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-black transition",
                   verifiedOnly
                     ? "state-active"
-                    : "border-ink/10 bg-cloud text-ink/62 hover:bg-panel hover:text-white"
+                    : "action-secondary"
                 )}
               >
                 <BadgeCheck size={14} aria-hidden="true" />
                 Verificados
               </button>
-              <label className="flex min-h-10 items-center gap-2 rounded-lg border border-ink/10 bg-white px-3 py-2 text-sm font-bold text-ink/62">
+              <label className="flex min-h-10 items-center gap-2 rounded-lg border border-ink/10 bg-panel px-3 py-2 text-sm font-bold text-ink/62">
                 <ArrowUpDown size={14} aria-hidden="true" />
                 <select
                   className="bg-transparent text-xs font-black text-ink outline-none"
@@ -234,7 +234,7 @@ export function ServiceMarketplace({
                 setVerifiedOnly(false);
                 setSortBy("recent");
               }}
-              className="focus-ring mt-4 rounded-lg px-3 py-2 text-xs font-black text-ink/58 hover:bg-white"
+              className="focus-ring mt-4 rounded-lg px-3 py-2 text-xs font-black text-ink/58 hover:bg-panel hover:text-ink"
             >
               Limpar filtros
             </button>
@@ -248,7 +248,7 @@ export function ServiceMarketplace({
           {requests.length} pedidos de quem quer contratar.
         </p>
         <p className="glass-panel spatial-card flex min-h-20 items-center gap-3 rounded-xl p-4 text-sm font-black text-ink/68">
-          <BriefcaseBusiness size={22} className="text-white" aria-hidden="true" />
+          <BriefcaseBusiness size={22} aria-hidden="true" />
           {offers.length} profissionais e serviços anunciados.
         </p>
         <p className="glass-panel spatial-card flex min-h-20 items-center gap-3 rounded-xl p-4 text-sm font-black text-ink/68">
@@ -264,7 +264,7 @@ export function ServiceMarketplace({
         <ServiceRail title="Quem está oferecendo" services={offers} />
       ) : null}
       {filteredServices.length === 0 ? (
-        <div className="mt-10 rounded-xl border border-ink/10 bg-white p-8 text-center">
+        <div className="mt-10 rounded-xl border border-ink/10 bg-panel p-8 text-center">
           <h2 className="text-2xl font-black text-ink">Nada encontrado por aqui</h2>
           <p className="mt-2 text-sm font-semibold text-ink/58">
             Tente outra cidade, categoria ou palavra-chave.
@@ -279,7 +279,7 @@ export function ServiceMarketplace({
               setVerifiedOnly(false);
               setSortBy("recent");
             }}
-            className="focus-ring mt-4 rounded-lg bg-cloud px-4 py-2 text-sm font-black text-ink hover:bg-white"
+            className="focus-ring action-secondary mt-4 rounded-lg px-4 py-2 text-sm font-black"
           >
             Limpar filtros
           </button>

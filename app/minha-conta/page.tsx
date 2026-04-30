@@ -135,7 +135,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
               ) : null}
 
               <nav
-                className="inline-flex w-fit rounded-xl border border-ink/10 bg-white p-1"
+                className="inline-flex w-fit rounded-xl border border-ink/10 bg-panel p-1"
                 aria-label="Abas da conta"
               >
                 <ButtonLink
@@ -168,7 +168,6 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
                   ) : (
                     <div className="account-banner-fallback absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(56,189,248,0.36),transparent_34%),linear-gradient(135deg,#050505_0%,#0a0a0a_52%,rgba(56,189,248,0.24)_160%)]" />
                   )}
-                  <div className="account-banner-overlay absolute inset-0 bg-black/28" />
                   <div className="relative grid gap-4 p-5 md:grid-cols-[auto_1fr_auto] md:items-end md:p-6">
                     <UserAvatar
                       name={profileName}
@@ -176,9 +175,9 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
                       size="xl"
                       frameless
                     />
-                    <div>
+                    <div className="max-w-2xl">
                       <div className="flex flex-wrap gap-2">
-                        <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-black uppercase text-white/72">
+                        <p className="inline-flex items-center gap-2 rounded-full border border-white/16 bg-black/62 px-3 py-1 text-xs font-black uppercase text-white">
                           <UserRound size={14} aria-hidden="true" />
                           {profileRole}
                         </p>
@@ -194,7 +193,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
                       <h2 className="mt-3 text-3xl font-black leading-tight text-white md:text-4xl">
                         {profileName}
                       </h2>
-                      <p className="mt-2 flex max-w-2xl items-center gap-2 break-all text-sm font-semibold text-white/58">
+                      <p className="mt-2 inline-flex max-w-2xl items-center gap-2 rounded-full border border-white/16 bg-black/62 px-3 py-1 text-sm font-semibold text-white break-all">
                         <Mail size={15} aria-hidden="true" />
                         {session.user.email}
                       </p>

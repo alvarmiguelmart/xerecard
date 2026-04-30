@@ -8,7 +8,7 @@ import { MarketplaceService } from "@/lib/marketplace-data";
 
 export function ServiceCard({ service }: { service: MarketplaceService }) {
   return (
-    <article className="spatial-card group flex h-full w-full flex-col overflow-hidden rounded-xl border border-ink/10 bg-white transition hover:border-sky/35">
+    <article className="card-surface spatial-card group flex h-full w-full flex-col overflow-hidden rounded-xl transition hover:border-sky/35">
       <Link
         href={`/servicos/${service.id}`}
         className="focus-ring relative block aspect-[4/3] bg-cloud sm:aspect-square"
@@ -58,7 +58,7 @@ export function ServiceCard({ service }: { service: MarketplaceService }) {
           </div>
           <Link
             href={`/servicos/${service.id}`}
-            className="focus-ring line-clamp-2 min-h-14 rounded-md text-xl font-black leading-tight text-ink hover:text-white"
+            className="focus-ring line-clamp-2 min-h-14 rounded-md text-xl font-black leading-tight text-ink transition hover:text-sky"
           >
             {service.title}
           </Link>
@@ -107,7 +107,7 @@ export function ServiceCard({ service }: { service: MarketplaceService }) {
           <ButtonLink
             href={`/servicos/${service.id}`}
             size="sm"
-            variant="dark"
+            variant="secondary"
             icon={<WhatsAppIcon className="size-4" />}
           >
             Ver detalhes
